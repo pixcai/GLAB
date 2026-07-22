@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "../namespace.h"
+#include "common.h"
 
 GLAB_NAMESPACE_BEGIN()
 
@@ -11,7 +11,7 @@ enum class CameraType {
     Orthographics,
 };
 
-struct Camera {
+struct Camera : IComponent {
     CameraType type{CameraType::Perspective};
 
     float near{0.1f};

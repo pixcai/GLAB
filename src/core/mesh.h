@@ -26,8 +26,8 @@ struct Mesh : Resource {
     void destroy() override;
 };
 
-struct MeshComponent : Component {
-    ResourceHandle<Mesh> mesh_handle;
+struct MeshRenderer : IComponent {
+    ResourceHandle<Mesh> mesh_handle{};
 };
 
 GLAB_NAMESPACE_END()

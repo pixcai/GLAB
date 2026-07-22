@@ -1,6 +1,8 @@
 #pragma once
 
-#define GLAB_NAMESPACE GLAB
+#ifndef GLAB_NAMESPACE
+#    define GLAB_NAMESPACE GLAB
+#endif
 
 // Add parentheses around macros to prevent syntax highlighting issues in some editors
 #define GLAB_NAMESPACE_BEGIN() namespace GLAB_NAMESPACE {

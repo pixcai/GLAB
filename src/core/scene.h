@@ -1,54 +1,67 @@
 #pragma once
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <typeindex>
+#include <vector>
 #include <unordered_map>
 
-#include "common.h"
+#include "rendering.h"
+#include "world.h"
 
 GLAB_NAMESPACE_BEGIN()
 
-class Entity {
-public:
-    Entity();
-    Entity(const std::string& name);
-
-    template <typename T>
-    T* get() const noexcept {
-        if (m_component_map.contains(typeid(T))) {
-            return static_cast<T*>(m_component_map.at(typeid(T)).get());
-        }
-        return nullptr;
-    }
-
-    template <typename T, typename... Args>
-    void add(Args&&... args) {
-        m_component_map.try_emplace(typeid(T), std::make_unique<T>(std::forward<Args>(args)...));
-    }
-
-    template <typename T>
-    void remove() {
-        m_component_map.erase(typeid(T));
-    }
-
-public:
-    const uint32_t id;
-    std::string name;
-
-private:
-    std::unordered_map<std::type_index, std::unique_ptr<Component>> m_component_map;
-};
+class Object;
 
 class Scene {
 public:
-    void add(std::shared_ptr<Entity> entity);
-    void remove(uint32_t id);
-    void forEach(std::function<void(Entity*)> callback);
+    Object createObject();
+    void destroyObject(Object& object);
+
+    std::vector<RenderItem>& collectRenderItem();
 
 private:
-    std::unordered_map<uint32_t, std::shared_ptr<Entity>> m_entity_map;
+    World m_world;
+    std::vector<RenderItem> m_render_items;
+    std::unordered_map<std::uint32_t, Entity> m_entity_map;
+
+    friend class Object;
+};
+
+class Object {
+public:
+    Object() = delete;
+
+    explicit Object(Scene* scene) : m_scene(scene) {
+        m_entity = m_scene->m_world.createEntity();
+        m_scene->m_entity_map[m_entity.id] = m_entity;
+    }
+
+    template <typename T, typename... Args>
+    T& add(Args&&... args) {
+        return m_scene->m_world.addComponent<T>(m_entity, std::forward<Args>(args)...);
+    };
+
+    template <typename T>
+    void remove() {
+        m_scene->m_world.removeComponent<T>(m_entity);
+    }
+
+    template <typename T>
+    T* get() noexcept {
+        return m_scene->m_world.getComponent<T>(m_entity);
+    }
+
+    template <typename T>
+    bool has() noexcept {
+        return m_scene->m_world.hasComponent<T>(m_entity);
+    }
+
+    void destroy() {
+        m_scene->m_world.destroyEntity(m_entity);
+        m_scene->m_entity_map.erase(m_entity.id);
+    }
+
+private:
+    Scene* m_scene;
+    Entity m_entity;
 };
 
 GLAB_NAMESPACE_END()

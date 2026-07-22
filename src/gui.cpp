@@ -27,9 +27,15 @@ GUI::GUI(GLFWwindow* window) {
 
     renderer = std::make_unique<GLAB_NAMESPACE::Renderer>(width, height);
     scene = std::make_unique<GLAB_NAMESPACE::Scene>();
+
+    auto object = scene->createObject();
+    object.add<GLAB_NAMESPACE::MeshRenderer>();
 }
 
 void GUI::render() {
+    auto render_items = scene->collectRenderItem();
+    renderer->render(render_items);
+
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGuiID dockspace = ImGui::GetID("DockSpace");
 
