@@ -10,3 +10,9 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
+build
+.cache
+*.ini
+*.log
+.xmake
+.DS_Store
