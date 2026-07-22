@@ -11,6 +11,8 @@ struct Shader : Resource {
     GLuint program{0};
     std::unordered_map<std::string, GLint> uniform_map;
 
+    Shader() : Resource(ResourceType::Shader) {}
+
     void destroy() override;
 };
 

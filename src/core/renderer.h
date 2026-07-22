@@ -13,7 +13,6 @@ public:
 
     void beginFrame();
     void endFrame();
-    void render(Scene& scene);
 
 private:
     int m_width{0}, m_height{0};

@@ -1,6 +1,5 @@
 #include "resource_manager.h"
 
-#include "../logger.h"
 #include "mesh.h"
 #include "shader.h"
 
@@ -20,20 +19,6 @@ ResourceManager::~ResourceManager() {
     }
     flushDestroyQueue();
 }
-
-template <typename T>
-void ResourceManager::load(const std::string& path,
-                           [[maybe_unused]] std::function<void(ResourceHandle<T>)> callback) {
-    LOG_WARN("Attempting to load an unsupported resource type from file {}", path);
-}
-
-template <>
-void ResourceManager::load<Mesh>(const std::string& path,
-                                 std::function<void(ResourceHandle<Mesh>)> callback) {}
-
-template <>
-void ResourceManager::load<Shader>(const std::string& path,
-                                   std::function<void(ResourceHandle<Shader>)> callback) {}
 
 void ResourceManager::pushDestroyQueue(Resource* resource) {
     if (resource) {
@@ -72,6 +57,12 @@ void ResourceManager::flushDestroyQueue() {
         delete resource;
     }
 }
+
+void ResourceManager::loadMesh(std::string_view path,
+                               std::function<void(ResourceHandle<Mesh>)> callback) {}
+
+void ResourceManager::loadShader(std::string_view path,
+                                 std::function<void(ResourceHandle<Shader>)> callback) {}
 
 void Mesh::destroy() {
     glDeleteVertexArrays(1, &vao);

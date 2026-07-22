@@ -7,8 +7,6 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-#include "core/geometry_helper.h"
-#include "core/mesh.h"
 #include "core/renderer.h"
 #include "core/scene.h"
 
@@ -29,17 +27,9 @@ GUI::GUI(GLFWwindow* window) {
 
     renderer = std::make_unique<GLAB_NAMESPACE::Renderer>(width, height);
     scene = std::make_unique<GLAB_NAMESPACE::Scene>();
-
-    std::shared_ptr<GLAB_NAMESPACE::Entity> entity = std::make_shared<GLAB_NAMESPACE::Entity>();
-    GLAB_NAMESPACE::MeshComponent component{};
-    component.mesh_handle = GLAB_NAMESPACE::GeometryHelper::makeCube();
-    entity->add<GLAB_NAMESPACE::MeshComponent>(component);
-    scene->add(entity);
 }
 
 void GUI::render() {
-    renderer->render(*scene);
-
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGuiID dockspace = ImGui::GetID("DockSpace");
 

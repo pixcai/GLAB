@@ -14,19 +14,19 @@ enum class CameraType {
 struct Camera {
     CameraType type{CameraType::Perspective};
 
-    float near{0.01f};
-    float far{100.0f};
+    float near{0.1f};
+    float far{1000.0f};
 
-    glm::mat4 view_matrix;
-    glm::mat4 projection_matrix;
-    glm::mat4 view_projection_matrix;
+    glm::mat4 view_matrix{1.0f};
+    glm::mat4 projection_matrix{1.0f};
+    glm::mat4 view_projection_matrix{1.0f};
 
     // Perspective camera fields
-    float fovy{60.0f};
+    float fovy{45.0f};
     float aspect{16.0f / 9.0f};
 
     // Orthographics camera fields
-    float left{0.0f}, right{0.0f}, bottom{0.0f}, top{0.0f};
+    float left{-1.0f}, right{1.0f}, bottom{-1.0f}, top{1.0f};
 
     bool active{true};
 

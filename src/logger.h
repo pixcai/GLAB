@@ -2,10 +2,10 @@
 
 #include <spdlog/spdlog.h>
 
-#ifdef NDEBUG
-#define GLAB_INIT_LOGGER() spdlog::set_level(spdlog::level::info)
+#if defined(NDEBUG)
+#    define GLAB_INIT_LOGGER() spdlog::set_level(spdlog::level::info)
 #else
-#define GLAB_INIT_LOGGER() spdlog::set_level(spdlog::level::debug)
+#    define GLAB_INIT_LOGGER() spdlog::set_level(spdlog::level::debug)
 #endif
 
 #define LOG_DEBUG(...) spdlog::debug(__VA_ARGS__)

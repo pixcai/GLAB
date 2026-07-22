@@ -13,6 +13,7 @@ target("GLAB")
     set_kind("binary")
     set_rundir("$(projectdir)")
     add_files("src/**.cpp")
+    add_defines("GLFW_INCLUDE_NONE")
     add_packages("imgui", "glfw", "glm", "stb", "spdlog")
     if not is_plat("macos") then
         add_packages("glad")

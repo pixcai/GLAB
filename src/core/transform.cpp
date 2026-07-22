@@ -5,7 +5,8 @@
 GLAB_NAMESPACE_BEGIN()
 
 void Transform::lookAt(glm::vec3 target, glm::vec3 up) {
-    auto view_matrix = glm::lookAt(position, target, up);
+    auto direction = glm::normalize(target - position);
+    rotation = glm::quatLookAt(direction, up);
 }
 
 void Transform::updateLocalMatrix() {

@@ -1,6 +1,5 @@
 #include <cstdlib>
 
-#define GLFW_INCLUDE_NONE 1
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

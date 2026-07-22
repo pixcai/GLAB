@@ -5,3 +5,4 @@ UseTab: Never
 ColumnLimit: 100
 SortIncludes: false
 AccessModifierOffset: -4
+IndentPPDirectives: AfterHash
