@@ -1,5 +1,6 @@
 #include "renderer.h"
 
+#include "../gl.h"
 #include "../logger.h"
 
 GLAB_NAMESPACE_BEGIN()
@@ -7,13 +8,19 @@ GLAB_NAMESPACE_BEGIN()
 Renderer::Renderer(int width, int height) : m_width(width), m_height(height) {}
 
 void Renderer::resize(int width, int height) noexcept {
+    if (width == m_width && height == m_height) return;
     m_width = width;
     m_height = height;
 }
 
-void Renderer::beginFrame() {}
+void Renderer::setClearColor(glm::vec4 clear_color) { m_clear_color = clear_color; }
 
-void Renderer::endFrame() {}
+void Renderer::beginFrame() {
+    glClearColor(m_clear_color.r, m_clear_color.g, m_clear_color.b, m_clear_color.a);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Renderer::endFrame() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
 
 void Renderer::render(const std::vector<RenderItem>& render_items) {
     buildCommandQueue(render_items);

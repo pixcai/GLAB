@@ -3,6 +3,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include <glm/glm.hpp>
+
 #include "common.h"
 #include "rendering.h"
 #include "world.h"
@@ -19,6 +21,9 @@ public:
     EntityObject* getObject(std::uint32_t id) noexcept;
 
     std::vector<RenderItem>& collectRenderItems();
+
+public:
+    glm::vec4 clear_color{0.0f, 0.0f, 1.0f, 1.0f};
 
 private:
     World m_world;

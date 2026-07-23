@@ -9,6 +9,10 @@
 
 #include "core/renderer.h"
 #include "core/scene.h"
+#include "gl.h"
+
+static int gui_width;
+static int gui_height;
 
 static std::unique_ptr<GLAB_NAMESPACE::Renderer> renderer;
 static std::unique_ptr<GLAB_NAMESPACE::Scene> scene;
@@ -20,12 +24,10 @@ void onFramebufferSizeCallback([[maybe_unused]] GLFWwindow* window, int width, i
 }
 
 GUI::GUI(GLFWwindow* window) {
-    int width, height;
-
-    glfwGetFramebufferSize(window, &width, &height);
+    glfwGetFramebufferSize(window, &gui_width, &gui_height);
     glfwSetFramebufferSizeCallback(window, onFramebufferSizeCallback);
 
-    renderer = std::make_unique<GLAB_NAMESPACE::Renderer>(width, height);
+    renderer = std::make_unique<GLAB_NAMESPACE::Renderer>();
     scene = std::make_unique<GLAB_NAMESPACE::Scene>();
 
     auto object = scene->createObject();
@@ -34,7 +36,13 @@ GUI::GUI(GLFWwindow* window) {
 }
 
 void GUI::render() {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, gui_width, gui_height);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     auto render_items = scene->collectRenderItems();
+    renderer->setClearColor(scene->clear_color);
     renderer->render(render_items);
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -115,6 +123,8 @@ void GUI::initLayout() {
 
 void GUI::renderWorkspace() {
     ImGui::Begin("Workspace", nullptr, ImGuiWindowFlags_MenuBar);
+    auto size = ImGui::GetContentRegionAvail();
+    renderer->resize(static_cast<int>(size.x), static_cast<int>(size.y));
     ImGui::End();
 }
 
