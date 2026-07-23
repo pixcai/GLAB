@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 
-#include "common.h"
+#include "framebuffer.h"
 #include "rendering.h"
 
 GLAB_NAMESPACE_BEGIN()
@@ -14,11 +14,12 @@ public:
     Renderer() = default;
     Renderer(int width, int height);
 
-    void resize(int width, int height) noexcept;
+    void resize(int width, int height);
 
     void render(const std::vector<RenderItem>& render_items);
 
     void setClearColor(glm::vec4 clear_color);
+    GLuint texture() const noexcept;
 
 private:
     void beginFrame();
@@ -30,8 +31,8 @@ private:
     void executeCommands(const std::vector<DrawCommand>& commands);
 
 private:
-    int m_width{0}, m_height{0};
     glm::vec4 m_clear_color{0.0f, 0.0f, 0.0f, 1.0f};
+    Framebuffer m_framebuffer{};
     std::vector<DrawCommand> m_opaque_queue;
     std::vector<DrawCommand> m_transparent_queue;
 };

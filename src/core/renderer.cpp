@@ -5,22 +5,24 @@
 
 GLAB_NAMESPACE_BEGIN()
 
-Renderer::Renderer(int width, int height) : m_width(width), m_height(height) {}
+Renderer::Renderer(int width, int height) : m_framebuffer(width, height) {}
 
-void Renderer::resize(int width, int height) noexcept {
-    if (width == m_width && height == m_height) return;
-    m_width = width;
-    m_height = height;
-}
+void Renderer::resize(int width, int height) { m_framebuffer.resize(width, height); }
 
 void Renderer::setClearColor(glm::vec4 clear_color) { m_clear_color = clear_color; }
 
+GLuint Renderer::texture() const noexcept { return m_framebuffer.texture(); }
+
 void Renderer::beginFrame() {
+    m_framebuffer.bind();
     glClearColor(m_clear_color.r, m_clear_color.g, m_clear_color.b, m_clear_color.a);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::endFrame() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
+void Renderer::endFrame() {
+    m_framebuffer.unbind();
+    m_framebuffer.resolve();
+}
 
 void Renderer::render(const std::vector<RenderItem>& render_items) {
     buildCommandQueue(render_items);
