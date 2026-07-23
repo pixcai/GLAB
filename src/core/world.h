@@ -1,6 +1,6 @@
 #pragma once
 
-#include <concepts>
+#include <memory>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -45,8 +45,7 @@ struct _IComponentStorage {
     virtual void remove(Entity entity) = 0;
 };
 
-template <typename Component>
-    requires std::derived_from<Component, IComponent>
+template <ComponentLike Component>
 class _ComponentStorage : public _IComponentStorage {
 public:
     Component* get(Entity entity) noexcept {
@@ -59,7 +58,7 @@ public:
     bool has(Entity entity) noexcept { return m_index_map.contains(entity.id); }
 
     void add(Entity entity, Component component) {
-        if (has(entity)) return;
+        if (entity.id == Entity::INVALID_ID || has(entity)) return;
 
         m_components.push_back(std::move(component));
         m_index_map[entity.id] = m_components.size() - 1;
@@ -82,14 +81,14 @@ private:
 
 class ComponentManager {
 public:
-    template <typename T>
-    _ComponentStorage<T>& getStorage() {
-        auto type = std::type_index(typeid(T));
+    template <ComponentLike Component>
+    _ComponentStorage<Component>& getStorage() {
+        auto type = std::type_index(typeid(Component));
 
         if (!m_storage_map.contains(type)) {
-            m_storage_map[type] = std::make_unique<_ComponentStorage<T>>();
+            m_storage_map[type] = std::make_unique<_ComponentStorage<Component>>();
         }
-        return *static_cast<_ComponentStorage<T>*>(m_storage_map.at(type).get());
+        return *static_cast<_ComponentStorage<Component>*>(m_storage_map.at(type).get());
     }
 
     void removeAll(Entity entity) {
@@ -111,26 +110,29 @@ public:
         m_entity_manager.destroy(entity);
     }
 
-    template <typename T, typename... Args>
-    T& addComponent(Entity entity, Args&&... args) {
-        auto& storage = m_component_manager.getStorage<T>();
-        storage.add(entity, T(std::forward<Args>(args)...));
-        return *storage.get(entity);
+    template <ComponentLike Component, typename... Args>
+    Component* addComponent(Entity entity, Args&&... args) {
+        if (entity.id == Entity::INVALID_ID) {
+            return nullptr;
+        }
+        auto& storage = m_component_manager.getStorage<Component>();
+        storage.add(entity, Component(std::forward<Args>(args)...));
+        return storage.get(entity);
     };
 
-    template <typename T>
+    template <ComponentLike Component>
     void removeComponent(Entity entity) {
-        m_component_manager.getStorage<T>().remove(entity);
+        m_component_manager.getStorage<Component>().remove(entity);
     }
 
-    template <typename T>
-    T* getComponent(Entity entity) noexcept {
-        return m_component_manager.getStorage<T>().get(entity);
+    template <ComponentLike Component>
+    Component* getComponent(Entity entity) noexcept {
+        return m_component_manager.getStorage<Component>().get(entity);
     }
 
-    template <typename T>
+    template <ComponentLike Component>
     bool hasComponent(Entity entity) noexcept {
-        return m_component_manager.getStorage<T>().has(entity);
+        return m_component_manager.getStorage<Component>().has(entity);
     }
 
 private:

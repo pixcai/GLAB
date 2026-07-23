@@ -15,13 +15,13 @@ struct Vertex {
     glm::vec2 uv{0.0f, 0.0f};
 };
 
-struct Mesh : Resource {
+struct Mesh : IResource {
     GLuint vao{0}, vbo{0}, ebo{0};
 
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
 
-    Mesh() : Resource(ResourceType::Mesh) {}
+    Mesh() : IResource(ResourceType::Mesh) {}
 
     void destroy() override;
 };

@@ -7,11 +7,11 @@
 
 GLAB_NAMESPACE_BEGIN()
 
-struct Shader : Resource {
+struct Shader : IResource {
     GLuint program{0};
     std::unordered_map<std::string, GLint> uniform_map;
 
-    Shader() : Resource(ResourceType::Shader) {}
+    Shader() : IResource(ResourceType::Shader) {}
 
     void destroy() override;
 };

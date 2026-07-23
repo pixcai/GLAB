@@ -12,7 +12,7 @@
 
 GLAB_NAMESPACE_BEGIN()
 
-struct Resource;
+struct IResource;
 
 class ResourceManager {
 public:
@@ -31,7 +31,7 @@ public:
         }
     }
 
-    void pushDestroyQueue(Resource* resource);
+    void pushDestroyQueue(IResource* resource);
     void flushDestroyQueue();
 
 private:
@@ -40,7 +40,7 @@ private:
 
 private:
     std::mutex m_mutex;
-    std::queue<Resource*> m_destroy_queue;
+    std::queue<IResource*> m_destroy_queue;
 
     std::unordered_map<std::string, ResourceHandle<Mesh>> m_mesh_map;
     std::unordered_map<std::string, ResourceHandle<Shader>> m_shader_map;

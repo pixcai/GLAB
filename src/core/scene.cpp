@@ -2,14 +2,30 @@
 
 GLAB_NAMESPACE_BEGIN()
 
-Object Scene::createObject() { return Object(this); }
+EntityObject Scene::createObject() { return EntityObject(this); }
 
-void Scene::destroyObject(Object& object) { object.destroy(); }
+void Scene::destroyObject(std::uint32_t id) {
+    if (auto object = getObject(id); object != nullptr) {
+        object->destroy();
+    }
+}
 
-std::vector<RenderItem>& Scene::collectRenderItem() {
+void Scene::addObject(EntityObject object) {
+    if (object.id() == Entity::INVALID_ID) return;
+    m_object_map.try_emplace(object.id(), std::move(object));
+}
+
+EntityObject* Scene::getObject(std::uint32_t id) noexcept {
+    if (m_object_map.contains(id)) {
+        return &m_object_map.at(id);
+    }
+    return nullptr;
+}
+
+std::vector<RenderItem>& Scene::collectRenderItems() {
     m_render_items.clear();
-    for (auto& [_, entity] : m_entity_map) {
-        auto mesh_renderer = m_world.getComponent<MeshRenderer>(entity);
+    for (auto& [_, object] : m_object_map) {
+        auto mesh_renderer = object.get<MeshRenderer>();
         if (!mesh_renderer) {
             continue;
         }

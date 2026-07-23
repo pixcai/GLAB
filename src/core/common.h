@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <cstdint>
 #include <limits>
 
@@ -19,14 +20,15 @@ struct Entity {
     bool operator==(const Entity& other) const noexcept {
         return id == other.id && generation == other.generation;
     }
-
-    bool valid() const noexcept { return id != INVALID_ID; }
 };
 
 struct IComponent {
     IComponent() = default;
     virtual ~IComponent() = default;
 };
+
+template <typename T>
+concept ComponentLike = std::derived_from<T, IComponent>;
 
 struct Mesh;
 struct Shader;

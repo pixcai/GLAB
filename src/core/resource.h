@@ -12,12 +12,12 @@ enum class ResourceType {
     Shader,
 };
 
-struct Resource {
+struct IResource {
     ResourceType resource_type;
     std::string resource_path;
 
-    Resource(ResourceType type) : resource_type(type) {}
-    virtual ~Resource() = default;
+    IResource(ResourceType type) : resource_type(type) {}
+    virtual ~IResource() = default;
 
     virtual void destroy() = 0;
 
@@ -37,7 +37,7 @@ public:
     ~ResourceHandle() { release(); }
 
     explicit ResourceHandle(T* resource)
-        requires std::derived_from<T, Resource>
+        requires std::derived_from<T, IResource>
     {
         m_resource = resource;
         if (m_resource) {

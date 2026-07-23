@@ -9,8 +9,8 @@
 #include "gui.h"
 #include "logger.h"
 
-constexpr int GLAB_WIDTH = 1000;
-constexpr int GLAB_HEIGHT = 800;
+constexpr int kWindowWidth = 1000;
+constexpr int kWindowHeight = 800;
 
 void onErrorCallback(int error, const char* description) {
     LOG_ERROR("({}) {}", error, description);
@@ -28,7 +28,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     float dpi = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
-    GLFWwindow* window = glfwCreateWindow((float)(dpi * GLAB_WIDTH), (float)(dpi * GLAB_HEIGHT),
+    GLFWwindow* window = glfwCreateWindow((float)(dpi * kWindowWidth), (float)(dpi * kWindowHeight),
                                           "GLAB", nullptr, nullptr);
     if (!window) {
         glfwTerminate();

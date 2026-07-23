@@ -8,18 +8,18 @@
 GLAB_NAMESPACE_BEGIN()
 
 struct RenderQueue {
-    static constexpr int OPAQUE = 1000;
-    static constexpr int TRANSPARENT = 3000;
+    static constexpr int kOpaque = 1000;
+    static constexpr int kTransparent = 3000;
 };
 
 struct RenderItem {
-    int render_queue{RenderQueue::OPAQUE};
+    int render_queue{RenderQueue::kOpaque};
     glm::mat4 world_matrix{1.0f};
     ResourceHandle<Mesh> mesh_handle;
 };
 
 struct DrawCommand {
-    int render_queue{RenderQueue::OPAQUE};
+    int render_queue{RenderQueue::kOpaque};
     glm::mat4 world_matrix{1.0f};
     ResourceHandle<Mesh> mesh_handle;
 };

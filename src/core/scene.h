@@ -3,60 +3,65 @@
 #include <vector>
 #include <unordered_map>
 
+#include "common.h"
 #include "rendering.h"
 #include "world.h"
 
 GLAB_NAMESPACE_BEGIN()
 
-class Object;
+class EntityObject;
 
 class Scene {
 public:
-    Object createObject();
-    void destroyObject(Object& object);
+    EntityObject createObject();
+    void destroyObject(std::uint32_t id);
+    void addObject(EntityObject object);
+    EntityObject* getObject(std::uint32_t id) noexcept;
 
-    std::vector<RenderItem>& collectRenderItem();
+    std::vector<RenderItem>& collectRenderItems();
 
 private:
     World m_world;
     std::vector<RenderItem> m_render_items;
-    std::unordered_map<std::uint32_t, Entity> m_entity_map;
+    std::unordered_map<std::uint32_t, EntityObject> m_object_map;
 
-    friend class Object;
+    friend class EntityObject;
 };
 
-class Object {
+class EntityObject {
 public:
-    Object() = delete;
+    EntityObject() = delete;
 
-    explicit Object(Scene* scene) : m_scene(scene) {
+    explicit EntityObject(Scene* scene) : m_scene(scene) {
         m_entity = m_scene->m_world.createEntity();
-        m_scene->m_entity_map[m_entity.id] = m_entity;
     }
 
-    template <typename T, typename... Args>
-    T& add(Args&&... args) {
-        return m_scene->m_world.addComponent<T>(m_entity, std::forward<Args>(args)...);
+    std::uint32_t id() const noexcept { return m_entity.id; }
+
+    template <ComponentLike Component, typename... Args>
+    Component* add(Args&&... args) {
+        return m_scene->m_world.addComponent<Component>(m_entity, std::forward<Args>(args)...);
     };
 
-    template <typename T>
+    template <ComponentLike Component>
     void remove() {
-        m_scene->m_world.removeComponent<T>(m_entity);
+        m_scene->m_world.removeComponent<Component>(m_entity);
     }
 
-    template <typename T>
-    T* get() noexcept {
-        return m_scene->m_world.getComponent<T>(m_entity);
+    template <ComponentLike Component>
+    Component* get() noexcept {
+        return m_scene->m_world.getComponent<Component>(m_entity);
     }
 
-    template <typename T>
+    template <ComponentLike Component>
     bool has() noexcept {
-        return m_scene->m_world.hasComponent<T>(m_entity);
+        return m_scene->m_world.hasComponent<Component>(m_entity);
     }
 
     void destroy() {
         m_scene->m_world.destroyEntity(m_entity);
-        m_scene->m_entity_map.erase(m_entity.id);
+        m_scene->m_object_map.erase(m_entity.id);
+        m_entity = {};
     }
 
 private:

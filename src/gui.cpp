@@ -30,10 +30,11 @@ GUI::GUI(GLFWwindow* window) {
 
     auto object = scene->createObject();
     object.add<GLAB_NAMESPACE::MeshRenderer>();
+    scene->addObject(object);
 }
 
 void GUI::render() {
-    auto render_items = scene->collectRenderItem();
+    auto render_items = scene->collectRenderItems();
     renderer->render(render_items);
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();

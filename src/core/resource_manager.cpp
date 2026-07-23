@@ -20,7 +20,7 @@ ResourceManager::~ResourceManager() {
     flushDestroyQueue();
 }
 
-void ResourceManager::pushDestroyQueue(Resource* resource) {
+void ResourceManager::pushDestroyQueue(IResource* resource) {
     if (resource) {
         std::lock_guard lock{m_mutex};
         m_destroy_queue.push(resource);
