@@ -11,7 +11,7 @@ void Scene::destroyObject(std::uint32_t id) {
 }
 
 void Scene::addObject(EntityObject object) {
-    if (object.id() == Entity::INVALID_ID) return;
+    if (object.id() == Entity::kInvalidID) return;
     m_object_map.try_emplace(object.id(), std::move(object));
 }
 

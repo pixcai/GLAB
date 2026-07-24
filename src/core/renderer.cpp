@@ -1,7 +1,6 @@
 #include "renderer.h"
 
 #include "../gl.h"
-#include "../logger.h"
 
 GLAB_NAMESPACE_BEGIN()
 
@@ -60,8 +59,6 @@ DrawCommand Renderer::createCommand(const RenderItem& render_item) {
     return command;
 }
 
-void Renderer::executeCommands(const std::vector<DrawCommand>& commands) {
-    LOG_DEBUG("command count = {}", commands.size());
-}
+void Renderer::executeCommands(const std::vector<DrawCommand>& commands) {}
 
 GLAB_NAMESPACE_END()

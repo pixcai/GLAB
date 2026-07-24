@@ -58,7 +58,7 @@ public:
     bool has(Entity entity) noexcept { return m_index_map.contains(entity.id); }
 
     void add(Entity entity, Component component) {
-        if (entity.id == Entity::INVALID_ID || has(entity)) return;
+        if (entity.id == Entity::kInvalidID || has(entity)) return;
 
         m_components.push_back(std::move(component));
         m_index_map[entity.id] = m_components.size() - 1;
@@ -112,7 +112,7 @@ public:
 
     template <ComponentLike Component, typename... Args>
     Component* addComponent(Entity entity, Args&&... args) {
-        if (entity.id == Entity::INVALID_ID) {
+        if (entity.id == Entity::kInvalidID) {
             return nullptr;
         }
         auto& storage = m_component_manager.getStorage<Component>();

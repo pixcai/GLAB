@@ -1,28 +1,41 @@
-#include "gui.h"
+#include "editor.h"
 
 #include <cstdio>
-#include <memory>
 
-#include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "core/renderer.h"
 #include "core/scene.h"
+#include "editor_context.h"
 
-static std::unique_ptr<GLAB_NAMESPACE::Renderer> renderer;
-static std::unique_ptr<GLAB_NAMESPACE::Scene> scene;
+GLAB_NAMESPACE_BEGIN()
 
-GUI::GUI(GLFWwindow* window) {
-    renderer = std::make_unique<GLAB_NAMESPACE::Renderer>();
-    scene = std::make_unique<GLAB_NAMESPACE::Scene>();
+static EditorContext g_editor_context;
+
+EditorContext& EditorContext::get() { return g_editor_context; }
+
+Editor::Editor(GLFWwindow* window) {
+    auto renderer = new Renderer();
+    auto scene = new Scene();
 
     auto object = scene->createObject();
-    object.add<GLAB_NAMESPACE::MeshRenderer>();
+    object.add<MeshRenderer>();
     scene->addObject(object);
+
+    g_editor_context.renderer = renderer;
+    g_editor_context.scene = scene;
 }
 
-void GUI::render() {
+Editor::~Editor() {
+    delete g_editor_context.renderer;
+    delete g_editor_context.scene;
+}
+
+void Editor::render() {
+    auto renderer = g_editor_context.renderer;
+    auto scene = g_editor_context.scene;
     auto render_items = scene->collectRenderItems();
     renderer->setClearColor(scene->clear_color);
     renderer->render(render_items);
@@ -57,16 +70,19 @@ void GUI::render() {
     }
 }
 
-void GUI::renderMainMenuBar() {
+void Editor::renderMainMenuBar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("View")) {
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
     }
 }
 
-void GUI::renderStatusBar() {
+void Editor::renderStatusBar() {
     ImGuiIO& io = ImGui::GetIO();
     ImGuiStyle& style = ImGui::GetStyle();
     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -89,7 +105,7 @@ void GUI::renderStatusBar() {
     ImGui::End();
 }
 
-void GUI::initLayout() {
+void Editor::initLayout() {
     ImGuiID dockspace = ImGui::GetID("DockSpace");
     ImGuiID workspace, inspector;
 
@@ -103,7 +119,9 @@ void GUI::initLayout() {
     ImGui::DockBuilderFinish(dockspace);
 }
 
-void GUI::renderWorkspace() {
+void Editor::renderWorkspace() {
+    auto renderer = g_editor_context.renderer;
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::Begin("Workspace", nullptr, ImGuiWindowFlags_MenuBar);
 
@@ -111,7 +129,7 @@ void GUI::renderWorkspace() {
     ImGui::EndMenuBar();
 
     auto size = ImGui::GetContentRegionAvail();
-    renderer->resize(static_cast<int>(size.x), static_cast<int>(size.y));
+    renderer->resize((int)size.x, (int)size.y);
     ImGui::Image((ImTextureID)(std::intptr_t)renderer->texture(), size, ImVec2(0.0f, 1.0f),
                  ImVec2(1.0f, 0.0f));
 
@@ -119,7 +137,12 @@ void GUI::renderWorkspace() {
     ImGui::PopStyleVar();
 }
 
-void GUI::renderInspector() {
+void Editor::renderInspector() {
+    auto scene = g_editor_context.scene;
+
     ImGui::Begin("Inspector");
+    ImGui::ColorEdit4("Scene color", glm::value_ptr(scene->clear_color));
     ImGui::End();
 }
+
+GLAB_NAMESPACE_END()

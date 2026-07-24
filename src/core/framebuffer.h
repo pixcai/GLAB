@@ -32,6 +32,7 @@ public:
 private:
     void createMSAAFBO();
     void createResolveFBO();
+    void rebuild();
     void destroy();
 
 private:

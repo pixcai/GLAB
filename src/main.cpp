@@ -5,8 +5,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "editor.h"
 #include "gl.h"
-#include "gui.h"
 #include "logger.h"
 
 constexpr int kWindowWidth = 1000;
@@ -26,6 +26,9 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLAB_GL_MAJOR);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLAB_GL_MINOR);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#if defined(__APPLE__)
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+#endif
 
     float dpi = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
     GLFWwindow* window = glfwCreateWindow((float)(dpi * kWindowWidth), (float)(dpi * kWindowHeight),
@@ -36,7 +39,7 @@ int main() {
     }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-    GLAB_LOAD_GL();
+    gladLoadGL();
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -53,7 +56,7 @@ int main() {
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(GLAB_GLSL_VERSION);
 
-    GUI gui{window};
+    GLAB_NAMESPACE::Editor editor{window};
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -66,7 +69,7 @@ int main() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
 
-        gui.render();
+        editor.render();
         ImGui::Render();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

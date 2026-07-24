@@ -1,10 +1,15 @@
 #pragma once
 
-struct GLFWwindow;
+#include <GLFW/glfw3.h>
 
-class GUI final {
+#include "namespace.h"
+
+GLAB_NAMESPACE_BEGIN()
+
+class Editor final {
 public:
-    GUI(GLFWwindow* window);
+    Editor(GLFWwindow* window);
+    ~Editor();
 
     void render();
 
@@ -15,3 +20,5 @@ private:
     void renderWorkspace();
     void renderInspector();
 };
+
+GLAB_NAMESPACE_END()

@@ -12,9 +12,9 @@ class Scene;
 class Renderer;
 
 struct Entity {
-    static constexpr auto INVALID_ID = std::numeric_limits<std::uint32_t>::max();
+    static constexpr auto kInvalidID = std::numeric_limits<std::uint32_t>::max();
 
-    std::uint32_t id{INVALID_ID};
+    std::uint32_t id{kInvalidID};
     std::uint32_t generation{0};
 
     bool operator==(const Entity& other) const noexcept {

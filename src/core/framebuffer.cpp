@@ -1,5 +1,7 @@
 #include "framebuffer.h"
 
+#include "../logger.h"
+
 GLAB_NAMESPACE_BEGIN()
 
 Framebuffer::Framebuffer() : Framebuffer(1, 1) {}
@@ -43,27 +45,27 @@ Framebuffer& Framebuffer::operator=(Framebuffer&& other) noexcept {
 }
 
 void Framebuffer::resize(int width, int height) {
-    if (width == m_width && height == m_height) return;
-    if (!(width > 0 && height > 0)) return;
+    if (width == m_width && height == m_height) {
+        // Do nothing
+        return;
+    }
+    if (!(width > 0 && height > 0)) {
+        LOG_WARN("Invalid framebuffer size: width={}, height={}", width, height);
+        return;
+    }
+    LOG_DEBUG("Framebuffer size changed: width={}, height={}", width, height);
 
     m_width = width;
     m_height = height;
-    setSamples(m_samples);
+    rebuild();
 }
 
 void Framebuffer::setSamples(int samples) {
-    m_samples = samples;
-    glBindRenderbuffer(GL_RENDERBUFFER, m_msaa_color);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, GL_RGBA8, m_width, m_height);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, m_msaa_depth);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, GL_DEPTH24_STENCIL8, m_width,
-                                     m_height);
-
-    glBindTexture(GL_TEXTURE_2D, m_resolve_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 nullptr);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    if (samples != m_samples) {
+        LOG_DEBUG("Framebuffer samples changed: samples={}", samples);
+        m_samples = samples;
+        rebuild();
+    }
 }
 
 int Framebuffer::width() const noexcept { return m_width; }
@@ -118,6 +120,20 @@ void Framebuffer::createResolveFBO() {
                            0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::rebuild() {
+    glBindRenderbuffer(GL_RENDERBUFFER, m_msaa_color);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, GL_RGBA8, m_width, m_height);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, m_msaa_depth);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, m_samples, GL_DEPTH24_STENCIL8, m_width,
+                                     m_height);
+
+    glBindTexture(GL_TEXTURE_2D, m_resolve_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Framebuffer::destroy() {
