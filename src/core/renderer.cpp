@@ -37,7 +37,7 @@ void Renderer::buildCommandQueue(const std::vector<RenderItem>& render_items) {
     m_transparent_queue.clear();
 
     for (auto& render_item : render_items) {
-        if (render_item.render_queue < 2500) {
+        if (render_item.render_queue < 48) {
             m_opaque_queue.push_back(createCommand(render_item));
         } else {
             m_transparent_queue.push_back(createCommand(render_item));
@@ -57,13 +57,10 @@ DrawCommand Renderer::createCommand(const RenderItem& render_item) {
     command.render_queue = render_item.render_queue;
     command.world_matrix = render_item.world_matrix;
     command.mesh_handle = render_item.mesh_handle;
+    command.material_handle = render_item.material_handle;
     return command;
 }
 
-void Renderer::executeCommands(const std::vector<DrawCommand>& commands) {
-    for (auto& command : commands) {
-        LOG_DEBUG("Mesh (id={}, name={})", command.mesh_handle->id, command.mesh_handle->name);
-    }
-}
+void Renderer::executeCommands(const std::vector<DrawCommand>& commands) {}
 
 GLAB_NAMESPACE_END()

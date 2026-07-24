@@ -1,16 +1,16 @@
 #include "resource_manager.h"
 
 #include "mesh.h"
-#include "shader.h"
 
 GLAB_NAMESPACE_BEGIN()
 
-ResourceManager& ResourceManager::get() {
+ResourceManager& ResourceManager::instance() noexcept {
     static ResourceManager singleton;
     return singleton;
 }
 
 ResourceManager::~ResourceManager() {
+    LOG_DEBUG("Destroy all resources");
     m_handle_map.clear();
     flushDestroyQueue();
 }
@@ -45,11 +45,6 @@ ResourceHandle<Mesh> ResourceManager::load(const std::string& path) {
     return {};
 }
 
-template <>
-ResourceHandle<Shader> ResourceManager::load(const std::string& path) {
-    return {};
-}
-
 void Mesh::destroy() {
     if (vao) {
         glDeleteVertexArrays(1, &vao);
@@ -64,15 +59,6 @@ void Mesh::destroy() {
     vertices.clear();
     indices.clear();
     LOG_DEBUG("Mesh (id={}, name={}) destroyed", id, name);
-}
-
-void Shader::destroy() {
-    if (program) {
-        glDeleteProgram(program);
-    }
-    program = 0;
-    uniform_map.clear();
-    LOG_DEBUG("Shader (id={}, name={}) destroyed", id, name);
 }
 
 GLAB_NAMESPACE_END()

@@ -6,24 +6,30 @@
 #include <imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "core/renderer.h"
-#include "core/scene.h"
-#include "editor_context.h"
 #include "core/geometry_helper.h"
+#include "core/material.h"
+#include "core/renderer.h"
+#include "core/resource_manager.h"
+#include "core/scene.h"
+#include "core/shader_manager.h"
+#include "editor_context.h"
 
 GLAB_NAMESPACE_BEGIN()
 
 static EditorContext g_editor_context;
 
-EditorContext& EditorContext::get() { return g_editor_context; }
+EditorContext& EditorContext::instance() noexcept { return g_editor_context; }
 
 Editor::Editor(GLFWwindow* window) {
+    ShaderManager::instance().init();
+
     auto renderer = new Renderer();
     auto scene = new Scene();
 
     auto object = scene->createObject();
     auto mesh_renderer = object.add<MeshRenderer>();
     mesh_renderer->mesh_handle = GeometryHelper::buildCube();
+    mesh_renderer->material_handle = ResourceManager::instance().make<Material>();
     scene->addObject(object);
 
     g_editor_context.renderer = renderer;
@@ -41,6 +47,7 @@ void Editor::render() {
     auto render_items = scene->collectRenderItems();
     renderer->setClearColor(scene->clear_color);
     renderer->render(render_items);
+    ResourceManager::instance().flushDestroyQueue();
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGuiID dockspace = ImGui::GetID("DockSpace");

@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "../gl.h"
+#include "material.h"
 #include "resource.h"
 
 GLAB_NAMESPACE_BEGIN()
@@ -27,7 +28,8 @@ struct Mesh : IResource {
 };
 
 struct MeshRenderer : IComponent {
-    ResourceHandle<Mesh> mesh_handle{};
+    ResourceHandle<Mesh> mesh_handle;
+    ResourceHandle<Material> material_handle;
 };
 
 GLAB_NAMESPACE_END()

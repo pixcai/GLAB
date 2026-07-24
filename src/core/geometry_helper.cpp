@@ -5,7 +5,7 @@
 GLAB_NAMESPACE_BEGIN()
 
 ResourceHandle<Mesh> GeometryHelper::buildCube(float size) {
-    auto cube = ResourceManager::get().build<Mesh>();
+    auto cube = ResourceManager::instance().make<Mesh>();
     float half_size = size * 0.5f;
 
     cube->vertices.push_back({{half_size, half_size, half_size}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}});

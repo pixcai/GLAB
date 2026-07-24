@@ -31,6 +31,7 @@ std::vector<RenderItem>& Scene::collectRenderItems() {
         }
         RenderItem render_item{};
         render_item.mesh_handle = mesh_renderer->mesh_handle;
+        render_item.material_handle = mesh_renderer->material_handle;
         m_render_items.push_back(render_item);
     }
     return m_render_items;

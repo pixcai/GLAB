@@ -31,6 +31,7 @@ template <typename T>
 concept ComponentLike = std::derived_from<T, IComponent>;
 
 struct Mesh;
+struct Material;
 struct Shader;
 
 struct IResource;

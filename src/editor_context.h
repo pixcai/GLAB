@@ -5,7 +5,7 @@
 GLAB_NAMESPACE_BEGIN()
 
 struct EditorContext {
-    static EditorContext& get();
+    static EditorContext& instance() noexcept;
 
     Scene* scene{nullptr};
     Renderer* renderer{nullptr};

@@ -12,7 +12,7 @@ GLAB_NAMESPACE_BEGIN()
 
 class ResourceManager {
 public:
-    static ResourceManager& get();
+    static ResourceManager& instance() noexcept;
 
     ~ResourceManager();
 
@@ -20,10 +20,9 @@ public:
     ResourceHandle<Resource> load(const std::string& path);
 
     template <ResourceLike Resource, typename... Args>
-    ResourceHandle<Resource> build(Args&&... args) {
-        static ResourceID next_id;
+    ResourceHandle<Resource> make(Args&&... args) {
         ResourceHandle<Resource> handle{new Resource(std::forward<Args>(args)...)};
-        handle->id = next_id++;
+        handle->id = m_next_id++;
         handle->name = std::format("Resource.{:03}", handle->id);
         LOG_DEBUG("Building a resource: id={}", handle->id);
         return handle;
@@ -41,6 +40,7 @@ public:
     void flushDestroyQueue();
 
 private:
+    ResourceID m_next_id{0};
     std::queue<IResource*> m_destroy_queue;
 
     std::unordered_map<std::string, ResourceID> m_id_map;

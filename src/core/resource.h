@@ -9,7 +9,7 @@ GLAB_NAMESPACE_BEGIN()
 
 enum class ResourceType {
     Mesh,
-    Shader,
+    Material,
 };
 
 struct IResource {
@@ -84,7 +84,7 @@ public:
     void release() {
         if (m_resource) {
             if (--m_resource->m_ref_count == 0) {
-                ResourceManager::get().pushDestroyQueue(m_resource);
+                ResourceManager::instance().pushDestroyQueue(m_resource);
             }
             m_resource = nullptr;
         }
