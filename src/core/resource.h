@@ -1,8 +1,8 @@
 #pragma once
 
-#include <concepts>
 #include <string>
 
+#include "common.h"
 #include "resource_manager.h"
 
 GLAB_NAMESPACE_BEGIN()
@@ -13,8 +13,10 @@ enum class ResourceType {
 };
 
 struct IResource {
-    ResourceType resource_type;
+    ResourceID id;
+    std::string name;
     std::string resource_path;
+    ResourceType resource_type;
 
     IResource(ResourceType type) : resource_type(type) {}
     virtual ~IResource() = default;
@@ -37,7 +39,7 @@ public:
     ~ResourceHandle() { release(); }
 
     explicit ResourceHandle(T* resource)
-        requires std::derived_from<T, IResource>
+        requires ResourceLike<T>
     {
         m_resource = resource;
         if (m_resource) {

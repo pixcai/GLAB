@@ -5,24 +5,18 @@
 
 GLAB_NAMESPACE_BEGIN()
 
-ResourceManager& ResourceManager::get() noexcept {
+ResourceManager& ResourceManager::get() {
     static ResourceManager singleton;
     return singleton;
 }
 
 ResourceManager::~ResourceManager() {
-    for (auto& [_, handle] : m_mesh_map) {
-        m_destroy_queue.push(handle.get());
-    }
-    for (auto& [_, handle] : m_shader_map) {
-        m_destroy_queue.push(handle.get());
-    }
+    m_handle_map.clear();
     flushDestroyQueue();
 }
 
 void ResourceManager::pushDestroyQueue(IResource* resource) {
     if (resource) {
-        std::lock_guard lock{m_mutex};
         m_destroy_queue.push(resource);
     } else {
         LOG_WARN("Cannot add a nullptr pointer to the destroy queue");
@@ -30,53 +24,55 @@ void ResourceManager::pushDestroyQueue(IResource* resource) {
 }
 
 void ResourceManager::flushDestroyQueue() {
-    std::lock_guard lock{m_mutex};
-
     while (!m_destroy_queue.empty()) {
         auto resource = m_destroy_queue.front();
-        auto path = resource->resource_path;
 
         m_destroy_queue.pop();
         resource->destroy();
 
-        // If the path is empty, the resource is built-in and is not tracked in the resource map
-        // Otherwise, the resource was loaded from a file and should be erased from the map
-        if (!path.empty()) {
-            switch (resource->resource_type) {
-                case ResourceType::Mesh:
-                    m_mesh_map.erase(path);
-                    break;
-                case ResourceType::Shader:
-                    m_shader_map.erase(path);
-                    break;
-                default:
-                    break;
-            }
-        }
         // Resources are allocated using new and must be released with delete
         delete resource;
     }
 }
 
-void ResourceManager::loadMesh(std::string_view path,
-                               std::function<void(ResourceHandle<Mesh>)> callback) {}
+template <ResourceLike Resource>
+ResourceHandle<Resource> ResourceManager::load(const std::string& path) {
+    LOG_WARN("Attempting to load an unsupported resource: {}", path);
+}
 
-void ResourceManager::loadShader(std::string_view path,
-                                 std::function<void(ResourceHandle<Shader>)> callback) {}
+template <>
+ResourceHandle<Mesh> ResourceManager::load(const std::string& path) {
+    return {};
+}
+
+template <>
+ResourceHandle<Shader> ResourceManager::load(const std::string& path) {
+    return {};
+}
 
 void Mesh::destroy() {
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-    glDeleteBuffers(1, &ebo);
+    if (vao) {
+        glDeleteVertexArrays(1, &vao);
+    }
+    if (vbo) {
+        glDeleteBuffers(1, &vbo);
+    }
+    if (ebo) {
+        glDeleteBuffers(1, &ebo);
+    }
     vao = vbo = ebo = 0;
     vertices.clear();
     indices.clear();
+    LOG_DEBUG("Mesh (id={}, name={}) destroyed", id, name);
 }
 
 void Shader::destroy() {
-    glDeleteProgram(program);
+    if (program) {
+        glDeleteProgram(program);
+    }
     program = 0;
     uniform_map.clear();
+    LOG_DEBUG("Shader (id={}, name={}) destroyed", id, name);
 }
 
 GLAB_NAMESPACE_END()

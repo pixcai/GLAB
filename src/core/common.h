@@ -33,7 +33,14 @@ concept ComponentLike = std::derived_from<T, IComponent>;
 struct Mesh;
 struct Shader;
 
+struct IResource;
+
+template <typename T>
+concept ResourceLike = std::derived_from<T, IResource>;
+
 template <typename T>
 class ResourceHandle;
+
+using ResourceID = std::uint32_t;
 
 GLAB_NAMESPACE_END()

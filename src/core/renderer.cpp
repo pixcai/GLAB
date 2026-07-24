@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include "../gl.h"
+#include "../logger.h"
 
 GLAB_NAMESPACE_BEGIN()
 
@@ -59,6 +60,10 @@ DrawCommand Renderer::createCommand(const RenderItem& render_item) {
     return command;
 }
 
-void Renderer::executeCommands(const std::vector<DrawCommand>& commands) {}
+void Renderer::executeCommands(const std::vector<DrawCommand>& commands) {
+    for (auto& command : commands) {
+        LOG_DEBUG("Mesh (id={}, name={})", command.mesh_handle->id, command.mesh_handle->name);
+    }
+}
 
 GLAB_NAMESPACE_END()

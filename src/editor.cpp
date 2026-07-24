@@ -9,6 +9,7 @@
 #include "core/renderer.h"
 #include "core/scene.h"
 #include "editor_context.h"
+#include "core/geometry_helper.h"
 
 GLAB_NAMESPACE_BEGIN()
 
@@ -21,7 +22,8 @@ Editor::Editor(GLFWwindow* window) {
     auto scene = new Scene();
 
     auto object = scene->createObject();
-    object.add<MeshRenderer>();
+    auto mesh_renderer = object.add<MeshRenderer>();
+    mesh_renderer->mesh_handle = GeometryHelper::buildCube();
     scene->addObject(object);
 
     g_editor_context.renderer = renderer;
