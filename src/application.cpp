@@ -6,7 +6,6 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <tracy/Tracy.hpp>
 
 #include "core/camera.h"
 #include "core/material.h"
@@ -71,13 +70,10 @@ Editor::~Editor() {
 }
 
 void Editor::render() {
-    FrameMark;
-
     auto renderer = g_editor_context.renderer;
     auto scene = g_editor_context.scene;
     auto render_items = scene->collectRenderItems();
     {
-        ZoneScopedN("Render");
         UBOPool::instance().updateLight(*g_light);
         renderer->setClearColor(scene->clear_color);
         renderer->render(render_items, *g_camera, *g_transform);
