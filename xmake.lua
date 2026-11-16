@@ -10,7 +10,9 @@ add_requires("glfw", "glm", "stb", "spdlog", "fastgltf")
 add_packages("imgui","glad", "glfw", "glm", "stb", "spdlog", "fastgltf")
 
 add_defines('PROJECT_ROOT="' .. path.unix(os.projectdir()) .. '"')
+add_defines("GLFW_INCLUDE_NONE")
 
 target("GLAB")
     set_kind("binary")
     add_files("src/**.cpp")
+    add_includedirs("src")
