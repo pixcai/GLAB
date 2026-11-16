@@ -1,14 +1,12 @@
 #pragma once
 
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <glm/ext/matrix_transform.hpp>
 
-#include "common.h"
+namespace glab::scene {
 
-GLAB_NAMESPACE_BEGIN()
-
-struct Transform : IComponent {
+struct Transform {
     glm::vec3 position{0.0f, 0.0f, 0.0f};
     glm::vec3 scale{1.0f, 1.0f, 1.0f};
     glm::quat rotation{1.0f, 0.0f, 0.0f, 0.0f};
@@ -24,8 +22,8 @@ struct Transform : IComponent {
     }
 
     void updateLocalMatrix() {
-        local_matrix = glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) *
-                       glm::scale(glm::mat4(1.0f), scale);
+        local_matrix =
+            glm::translate(glm::mat4(1.0f), position) * glm::mat4(rotation) * glm::scale(glm::mat4(1.0f), scale);
     }
 
     void updateWorldMatrix(const glm::mat4& parent_matrix) {
@@ -34,4 +32,4 @@ struct Transform : IComponent {
     }
 };
 
-GLAB_NAMESPACE_END()
+}  // namespace glab::scene

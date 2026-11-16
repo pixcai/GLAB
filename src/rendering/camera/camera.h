@@ -1,18 +1,16 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/glm.hpp>
 
-#include "common.h"
-
-GLAB_NAMESPACE_BEGIN()
+namespace glab::rendering {
 
 enum class CameraType {
     Perspective,
     Orthographics,
 };
 
-struct Camera : IComponent {
+struct Camera {
     CameraType type{CameraType::Perspective};
 
     glm::mat4 view_matrix{1.0f};
@@ -43,11 +41,10 @@ struct Camera : IComponent {
         if (type == CameraType::Orthographics) {
             projection_matrix = glm::ortho(left, right, bottom, top);
         } else {
-            projection_matrix =
-                glm::perspective(glm::radians(fovy), (float)width / height, near_plane, far_plane);
+            projection_matrix = glm::perspective(glm::radians(fovy), (float)width / height, near_plane, far_plane);
         }
         view_projection_matrix = projection_matrix * view_matrix;
     }
 };
 
-GLAB_NAMESPACE_END()
+}  // namespace glab::rendering
