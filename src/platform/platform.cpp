@@ -7,7 +7,7 @@
 
 namespace glab::platform {
 
-static bool initialized = false;
+static bool g_initialized = false;
 
 static void OnError(int code, const char* description) { spdlog::error("GLFW ({}): {}", code, description); }
 
@@ -16,12 +16,12 @@ void Init() {
     if (!glfwInit()) {
         throw std::runtime_error("Failed to initialize GLFW");
     }
-    initialized = true;
+    g_initialized = true;
 }
 
 void Shutdown() {
-    if (initialized) {
-        initialized = false;
+    if (g_initialized) {
+        g_initialized = false;
         glfwTerminate();
     }
 }

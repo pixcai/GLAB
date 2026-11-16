@@ -1,6 +1,8 @@
 #include "config/config.h"
 #include "editor.h"
 #include "editor/ui/main_menu_bar.h"
+#include "editor/ui/views/outliner.h"
+#include "editor/ui/views/properties.h"
 #include "editor/ui/views/view3d.h"
 #include "platform/window.h"
 
@@ -10,6 +12,8 @@
 #include <imgui_impl_opengl3.h>
 
 namespace glab::editor {
+
+static bool g_initialized = false;
 
 void Init(platform::Window* window) {
     IMGUI_CHECKVERSION();
@@ -27,18 +31,25 @@ void Init(platform::Window* window) {
 
     ImGui_ImplGlfw_InitForOpenGL(platform::GetNativeWindow(window), true);
     ImGui_ImplOpenGL3_Init(config::kGLSLVersionString.data());
+
+    g_initialized = true;
 }
 
 void Shutdown() {
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    if (g_initialized) {
+        g_initialized = false;
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+    }
 }
 
 Editor::Editor(platform::Window* window, event::EventEmitter& event_emitter)
     : m_context({.event_emitter = event_emitter, .window = window}) {
     m_widgets.emplace_back(std::make_unique<ui::MainMenuBar>());
     m_widgets.emplace_back(std::make_unique<ui::View3D>());
+    m_widgets.emplace_back(std::make_unique<ui::Outliner>());
+    m_widgets.emplace_back(std::make_unique<ui::Properties>());
 }
 
 Editor::~Editor() {}
