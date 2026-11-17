@@ -1,6 +1,8 @@
 #include "config/config.h"
 #include "editor.h"
+#include "editor/ui/dock_space.h"
 #include "editor/ui/main_menu_bar.h"
+#include "editor/ui/status_bar.h"
 #include "editor/ui/views/outliner.h"
 #include "editor/ui/views/properties.h"
 #include "editor/ui/views/view3d.h"
@@ -47,6 +49,8 @@ void Shutdown() {
 Editor::Editor(platform::Window* window, event::EventEmitter& event_emitter)
     : m_context({.event_emitter = event_emitter, .window = window}) {
     m_widgets.emplace_back(std::make_unique<ui::MainMenuBar>());
+    m_widgets.emplace_back(std::make_unique<ui::StatusBar>());
+    m_widgets.emplace_back(std::make_unique<ui::DockSpace>());
     m_widgets.emplace_back(std::make_unique<ui::View3D>());
     m_widgets.emplace_back(std::make_unique<ui::Outliner>());
     m_widgets.emplace_back(std::make_unique<ui::Properties>());
@@ -58,8 +62,6 @@ void Editor::BeginFrame() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-
-    ImGui::DockSpaceOverViewport();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
