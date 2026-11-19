@@ -31,19 +31,22 @@ private:
 };
 
 struct IEventListener {
-    virtual ~IEventListener() = 0;
+    virtual ~IEventListener() = default;
 };
+
+template <typename EventT>
+using EventCallback = std::function<void(const EventT& event)>;
 
 template <typename EventT>
 struct EventListener : public IEventListener {
     std::shared_ptr<EventState> state;
-    std::function<void(const EventT& event)> callback;
+    EventCallback<EventT> callback;
 };
 
-class EventManager {
+class EventEmitter {
 public:
     template <typename EventT>
-    EventConnection<EventT> AddListener(std::function<void(const EventT& event)> callback) {
+    EventConnection<EventT> AddListener(EventCallback<EventT> callback) {
         auto state = std::make_shared<EventState>();
         auto listener = std::make_shared<EventListener<EventT>>(
             state, [callback = std::move(callback)](const EventT& event) { callback(event); });
@@ -73,11 +76,30 @@ private:
         for (auto it = first; it != last; ++it) {
             if (it->second == listener) {
                 m_listeners.erase(listener);
+                break;
             }
         }
     }
 
     std::unordered_multimap<std::type_index, std::shared_ptr<IEventListener>> m_listeners;
+};
+
+class EventManager {
+public:
+    EventManager() : m_emitter(std::make_shared<EventEmitter>()) {}
+
+    template <typename EventT>
+    EventConnection<EventT> AddListener(EventCallback<EventT> callback) {
+        return m_emitter->AddListener(std::move(callback));
+    }
+
+    template <typename EventT>
+    void Dispatch(const EventT& event) {
+        m_emitter->Dispatch(event);
+    }
+
+private:
+    std::shared_ptr<EventEmitter> m_emitter;
 };
 
 }  // namespace glab::core

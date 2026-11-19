@@ -5,7 +5,7 @@
 namespace glab::editor {
 
 struct EditorContext {
-    core::EventManager& event_manager;
+    core::EventManager event_manager;
 };
 
 }  // namespace glab::editor
