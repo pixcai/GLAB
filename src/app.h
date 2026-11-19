@@ -1,6 +1,5 @@
 #pragma once
 
-#include "app_context.h"
 #include "editor/editor.h"
 #include "platform/window.h"
 
@@ -17,7 +16,6 @@ private:
     void Shutdown();
 
 private:
-    AppContext m_context{};
     std::unique_ptr<platform::Window> m_window;
     std::unique_ptr<editor::Editor> m_editor;
 };

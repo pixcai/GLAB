@@ -1,5 +1,6 @@
 #include "config/config.h"
-#include "core/event/event_emitter.h"
+#include "events.h"
+#include "global.h"
 #include "window.h"
 
 #include <stdexcept>
@@ -8,12 +9,9 @@
 #include <glad/gl.h>
 #include <imgui_impl_glfw.h>
 
-#define USER_POINTER() static_cast<Window*>(glfwGetWindowUserPointer(native))
-
 namespace glab::platform {
 
-Window::Window(const char* title, int width, int height, event::EventEmitter& event_emitter)
-    : m_event_emitter(event_emitter) {
+Window::Window(const char* title, int width, int height) {
     glfwDefaultWindowHints();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, config::kGLVersionMajor);
@@ -46,24 +44,23 @@ void Window::PollEvents() { glfwPollEvents(); }
 void Window::SwapBuffers() { glfwSwapBuffers(m_native); }
 
 void Window::OnFramebufferResize(GLFWwindow* native, int width, int height) {
-    USER_POINTER()->m_event_emitter.Emit(event::FramebufferResizeEvent{.width = width, .height = height});
+    Global::event_manager.Dispatch(FramebufferResizeEvent{width, height});
 }
 
 void Window::OnKeyPressed(GLFWwindow* native, int key, int code, int action, int mods) {
-    USER_POINTER()->m_event_emitter.Emit(
-        event::KeyPressedEvent{.key = key, .code = code, .action = action, .mods = mods});
+    Global::event_manager.Dispatch(KeyPressedEvent{key, code, action, mods});
 }
 
 void Window::OnMousePressed(GLFWwindow* native, int button, int action, int mods) {
-    USER_POINTER()->m_event_emitter.Emit(event::MousePressedEvent{.button = button, .action = action, .mods = mods});
+    Global::event_manager.Dispatch(MousePressedEvent{button, action, mods});
 }
 
 void Window::OnMouseMove(GLFWwindow* native, double dx, double dy) {
-    USER_POINTER()->m_event_emitter.Emit(event::MouseMoveEvent{.dx = dx, .dy = dy});
+    Global::event_manager.Dispatch(MouseMoveEvent{dx, dy});
 }
 
 void Window::OnMouseWheel(GLFWwindow* native, double dx, double dy) {
-    USER_POINTER()->m_event_emitter.Emit(event::MouseWheelEvent{.dx = dx, .dy = dy});
+    Global::event_manager.Dispatch(MouseWheelEvent{dx, dy});
 }
 
 GLFWwindow* GetNativeWindow(Window* window) { return window->m_native; }

@@ -1,10 +1,6 @@
 #pragma once
 
-#include <cstddef>
-
-namespace glab::event {
-
-using EventID = std::size_t;
+namespace glab::platform {
 
 struct FramebufferResizeEvent {
     int width, height;
@@ -26,4 +22,4 @@ struct MouseWheelEvent {
     double dx, dy;
 };
 
-}  // namespace glab::event
+}  // namespace glab::platform

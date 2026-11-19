@@ -17,22 +17,16 @@ void App::Init() {
 
     platform::Init();
 
-    auto& event_emitter = m_context.event_emitter;
-
-    m_window = std::make_unique<platform::Window>("GLAB", config::kWindowSize.x, config::kWindowSize.y, event_emitter);
+    m_window = std::make_unique<platform::Window>("GLAB", config::kWindowSize.x, config::kWindowSize.y);
 
     auto window = m_window.get();
 
     editor::Init(window);
 
-    m_editor = std::make_unique<editor::Editor>(window, event_emitter);
-
-    m_context.window = window;
-    m_context.editor = m_editor.get();
+    m_editor = std::make_unique<editor::Editor>();
 }
 
 void App::Shutdown() {
-    m_context = {};
     m_editor.reset();
     m_window.reset();
 

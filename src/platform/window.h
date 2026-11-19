@@ -1,14 +1,12 @@
 #pragma once
 
-#include "core/event/event_emitter.h"
-
 #include <GLFW/glfw3.h>
 
 namespace glab::platform {
 
 class Window {
 public:
-    Window(const char* title, int width, int height, event::EventEmitter& event_emitter);
+    Window(const char* title, int width, int height);
     ~Window();
 
     void Close();
@@ -28,7 +26,6 @@ private:
     friend GLFWwindow* GetNativeWindow(Window* window);
     friend float GetContentScale(Window* window);
 
-    event::EventEmitter& m_event_emitter;
     GLFWwindow* m_native;
 };
 

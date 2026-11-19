@@ -1,13 +1,11 @@
 #pragma once
 
-#include "core/event/event_emitter.h"
-#include "platform/window.h"
+#include "core/event_manager.h"
 
 namespace glab::editor {
 
 struct EditorContext {
-    event::EventEmitter& event_emitter;
-    platform::Window* window;
+    core::EventManager& event_manager;
 };
 
 }  // namespace glab::editor

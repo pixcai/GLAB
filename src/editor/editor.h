@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/event/event_emitter.h"
 #include "editor/ui/widget.h"
 #include "editor_context.h"
 #include "platform/window.h"
@@ -15,7 +14,7 @@ void Shutdown();
 
 class Editor {
 public:
-    Editor(platform::Window* window, event::EventEmitter& event_emitter);
+    Editor();
     ~Editor();
 
     void BeginFrame();
