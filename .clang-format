@@ -8,3 +8,4 @@ IncludeBlocks: Preserve
 AccessModifierOffset: -4
 IndentPPDirectives: AfterHash
 AlignConsecutiveMacros: true
+BreakConstructorInitializers: BeforeComma

@@ -20,10 +20,8 @@ struct GPUVertexLayout {
 
     GPUVertexLayout(GLsizei stride) : m_stride(stride) {}
 
-    void AddFloat(GLuint location, GLint size, std::size_t offset) { AddFloat(location, size, offset, GL_FALSE); }
-
-    void AddFloat(GLuint location, GLint size, std::size_t offset, GLboolean normalized) {
-        attributes.emplace_back(location, size, GL_FLOAT, normalized, m_stride, offset);
+    void Add(GLuint location, GLint size, std::size_t offset) {
+        attributes.emplace_back(location, size, GL_FLOAT, GL_FALSE, m_stride, offset);
     }
 
 private:
@@ -31,7 +29,7 @@ private:
 };
 
 struct GPUBuffer {
-    GPUBuffer(GLenum target);
+    GPUBuffer(GLenum target, GLenum usage);
     ~GPUBuffer();
 
     GPUBuffer(const GPUBuffer& other) = delete;
@@ -41,12 +39,11 @@ struct GPUBuffer {
     GPUBuffer& operator=(GPUBuffer&& other) noexcept;
 
     void Bind() const;
-    void Unbind() const;
 
-    void SetData(const void* data, GLsizeiptr size, GLenum usage);
+    void Upload(const void* data, GLsizeiptr size);
 
 private:
-    GLenum m_target;
+    GLenum m_target, m_usage;
     GLuint m_id;
 };
 
@@ -61,7 +58,6 @@ struct GPUVertexArray {
     GPUVertexArray& operator=(GPUVertexArray&& other) noexcept;
 
     void Bind() const;
-    void Unbind() const;
 
     void SetVertexBuffer(const GPUBuffer& buffer);
     void SetBuffer(const GPUBuffer& buffer);

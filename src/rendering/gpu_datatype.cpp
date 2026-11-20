@@ -7,7 +7,7 @@
 
 namespace glab::rendering {
 
-GPUBuffer::GPUBuffer(GLenum target) : m_target(target) { glGenBuffers(1, &m_id); }
+GPUBuffer::GPUBuffer(GLenum target, GLenum usage) : m_target(target), m_usage(usage) { glGenBuffers(1, &m_id); }
 
 GPUBuffer::~GPUBuffer() {
     if (m_id != 0) {
@@ -36,15 +36,14 @@ void GPUBuffer::Bind() const {
     }
     glBindBuffer(m_target, m_id);
 }
-void GPUBuffer::Unbind() const { glBindBuffer(m_target, 0); }
 
-void GPUBuffer::SetData(const void* data, GLsizeiptr size, GLenum usage) {
+void GPUBuffer::Upload(const void* data, GLsizeiptr size) {
     if (m_id == 0) {
         spdlog::error("Invalid GPU buffer");
         return;
     }
     Bind();
-    glBufferData(m_target, size, data, usage);
+    glBufferData(m_target, size, data, m_usage);
 }
 
 GPUVertexArray::GPUVertexArray(GPUVertexLayout layout) : m_layout(std::move(layout)) { glGenVertexArrays(1, &m_id); }
@@ -76,8 +75,6 @@ void GPUVertexArray::Bind() const {
     }
     glBindVertexArray(m_id);
 }
-
-void GPUVertexArray::Unbind() const { glBindVertexArray(0); }
 
 void GPUVertexArray::SetVertexBuffer(const GPUBuffer& buffer) {
     Bind();
