@@ -1,3 +1,4 @@
+#include "node.h"
 #include "rendering/render_queue.h"
 #include "scene.h"
 
@@ -9,7 +10,7 @@ Scene::Scene() : m_root(MakeNode()) {}
 
 std::shared_ptr<Node> Scene::MakeNode() {
     spdlog::debug("Making node");
-    return std::shared_ptr<Node>(new Node(Scene::next_node_id++, m_storage));
+    return std::shared_ptr<Node>(new Node(NodeID::Next(), m_storage));
 }
 
 void Scene::AddNode(std::shared_ptr<Node> node) { m_root->AddChild(node); }

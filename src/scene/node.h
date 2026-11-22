@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/id.h"
+
 #include <memory>
 #include <typeindex>
 #include <unordered_map>
@@ -7,11 +9,9 @@
 namespace glab::scene {
 
 class Scene;
-
-using NodeID = std::size_t;
-inline constexpr NodeID VALID_NODE_ID = 0;
-
 class Node;
+
+using NodeID = core::ID<Node>;
 
 struct BucketBase {
     virtual ~BucketBase() = default;
