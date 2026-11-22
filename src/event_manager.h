@@ -5,7 +5,7 @@
 #include <typeindex>
 #include <unordered_map>
 
-namespace glab::core {
+namespace glab {
 
 struct EventState {
     bool connected{true};
@@ -16,7 +16,7 @@ struct EventConnection {
     EventConnection(const std::shared_ptr<EventT>& state, std::function<void()> on_disconnect)
         : m_state(state), m_on_disconnect(std::move(on_disconnect)) {}
 
-    void Disconnect() const {
+    void Unsubscribe() const {
         if (auto state = m_state.lock()) {
             if (state->connected) {
                 state->connected = false;
@@ -43,10 +43,10 @@ struct EventListener : public IEventListener {
     EventCallback<EventT> callback;
 };
 
-class EventEmitter {
+class EventManager {
 public:
     template <typename EventT>
-    EventConnection<EventT> AddListener(EventCallback<EventT> callback) {
+    EventConnection<EventT> Subscribe(EventCallback<EventT> callback) {
         auto state = std::make_shared<EventState>();
         auto listener = std::make_shared<EventListener<EventT>>(
             state, [callback = std::move(callback)](const EventT& event) { callback(event); });
@@ -84,22 +84,6 @@ private:
     std::unordered_multimap<std::type_index, std::shared_ptr<IEventListener>> m_listeners;
 };
 
-class EventManager {
-public:
-    EventManager() : m_emitter(std::make_shared<EventEmitter>()) {}
+inline static EventManager event_manager;
 
-    template <typename EventT>
-    EventConnection<EventT> AddListener(EventCallback<EventT> callback) {
-        return m_emitter->AddListener(std::move(callback));
-    }
-
-    template <typename EventT>
-    void Dispatch(const EventT& event) {
-        m_emitter->Dispatch(event);
-    }
-
-private:
-    std::shared_ptr<EventEmitter> m_emitter;
-};
-
-}  // namespace glab::core
+}  // namespace glab

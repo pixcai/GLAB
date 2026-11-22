@@ -1,6 +1,6 @@
 #include "config/config.h"
+#include "event_manager.h"
 #include "events.h"
-#include "global.h"
 #include "window.h"
 
 #include <stdexcept>
@@ -44,24 +44,20 @@ void Window::PollEvents() { glfwPollEvents(); }
 void Window::SwapBuffers() { glfwSwapBuffers(m_native); }
 
 void Window::OnFramebufferResize(GLFWwindow* native, int width, int height) {
-    Global::event_manager.Dispatch(FramebufferResizeEvent{width, height});
+    event_manager.Dispatch(FramebufferResizeEvent{width, height});
 }
 
 void Window::OnKeyPressed(GLFWwindow* native, int key, int code, int action, int mods) {
-    Global::event_manager.Dispatch(KeyPressedEvent{key, code, action, mods});
+    event_manager.Dispatch(KeyPressedEvent{key, code, action, mods});
 }
 
 void Window::OnMousePressed(GLFWwindow* native, int button, int action, int mods) {
-    Global::event_manager.Dispatch(MousePressedEvent{button, action, mods});
+    event_manager.Dispatch(MousePressedEvent{button, action, mods});
 }
 
-void Window::OnMouseMove(GLFWwindow* native, double dx, double dy) {
-    Global::event_manager.Dispatch(MouseMoveEvent{dx, dy});
-}
+void Window::OnMouseMove(GLFWwindow* native, double dx, double dy) { event_manager.Dispatch(MouseMoveEvent{dx, dy}); }
 
-void Window::OnMouseWheel(GLFWwindow* native, double dx, double dy) {
-    Global::event_manager.Dispatch(MouseWheelEvent{dx, dy});
-}
+void Window::OnMouseWheel(GLFWwindow* native, double dx, double dy) { event_manager.Dispatch(MouseWheelEvent{dx, dy}); }
 
 GLFWwindow* GetNativeWindow(Window* window) { return window->m_native; }
 

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "core/event_manager.h"
+#include "event_manager.h"
 #include "scene/scene.h"
 
 namespace glab::editor {
 
 struct EditorContext {
-    core::EventManager event_manager;
+    EventManager event_manager;
     scene::Scene* scene{nullptr};
 };
 

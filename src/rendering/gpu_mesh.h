@@ -1,7 +1,7 @@
 #pragma once
 
-#include "geometry/mesh.h"
 #include "gpu_datatype.h"
+#include "mesh/mesh.h"
 
 #include <glad/gl.h>
 
@@ -22,7 +22,7 @@ struct GPUMesh {
     GLuint GetIndexCount() { return m_vertex_count; }
     GLuint GetVertexCount() { return m_index_count; }
 
-    void Upload(const geometry::Mesh& mesh);
+    void Upload(const mesh::Mesh& mesh);
 
 private:
     GPUVertexArray m_vao;

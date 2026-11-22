@@ -1,6 +1,7 @@
-#include "geometry/mesh.h"
 #include "gpu_datatype.h"
 #include "gpu_mesh.h"
+#include "mesh/mesh.h"
+#include "mesh/vertex.h"
 
 #include <utility>
 
@@ -30,9 +31,9 @@ GPUMesh& GPUMesh::operator=(GPUMesh&& other) noexcept {
 
 void GPUMesh::Bind() const { m_vao.Bind(); }
 
-void GPUMesh::Upload(const geometry::Mesh& mesh) {
+void GPUMesh::Upload(const mesh::Mesh& mesh) {
     Bind();
-    m_vbo.Upload(mesh.vertices.data(), mesh.vertices.size() * sizeof(geometry::Vertex));
+    m_vbo.Upload(mesh.vertices.data(), mesh.vertices.size() * sizeof(mesh::Vertex));
     if (!mesh.indices.empty()) {
         m_ebo.Upload(mesh.indices.data(), mesh.indices.size() * sizeof(GLuint));
     }

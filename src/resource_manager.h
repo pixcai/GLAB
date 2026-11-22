@@ -1,0 +1,109 @@
+#pragma once
+
+#include "core/id.h"
+
+#include <memory>
+#include <typeindex>
+#include <unordered_map>
+
+namespace glab {
+
+enum class ResourceStatus {
+    kLoading,
+    kReady,
+    kUnloading,
+};
+
+template <typename T>
+using ResourceID = core::ID<T>;
+
+template <typename T>
+struct ResourceEntry {
+    ResourceID<T> id;
+    std::unique_ptr<T> data;
+    int ref_count{1};
+    ResourceStatus status{ResourceStatus::kReady};
+};
+
+struct IResourceStore {
+    virtual ~IResourceStore() = default;
+};
+
+template <typename T>
+struct ResourceStore : public IResourceStore {
+    ResourceEntry<T>* Get(ResourceID<T> id) {
+        if (auto it = m_entries.find(id); it != m_entries.end()) {
+            return &it->second;
+        }
+        return nullptr;
+    }
+
+    template <typename... Args>
+    ResourceID<T> Add(Args&&... args) {
+        auto id = ResourceID<T>::Next();
+        m_entries.try_emplace(id, id, std::make_unique<T>(std::forward<Args>(args)...));
+        return id;
+    }
+
+    void Remove(ResourceID<T> id) { m_entries.erase(id); }
+
+private:
+    std::unordered_map<ResourceID<T>, ResourceEntry<T>> m_entries;
+};
+
+struct ResourceManager {
+    template <typename T>
+    T* Acquire(ResourceID<T> id) {
+        if (auto store = GetStore<T>()) {
+            if (auto entry = store->Get(id); entry) {
+                ++entry->ref_count;
+                return entry->data.get();
+            }
+        }
+        return nullptr;
+    }
+
+    template <typename T>
+    void Release(ResourceID<T> id) {
+        if (auto store = GetStore<T>()) {
+            if (auto entry = store->Get(id); entry) {
+                if (--entry->ref_count <= 0) {
+                    store->Remove(id);
+                }
+            }
+        }
+    }
+
+    template <typename T>
+    T* TryGet(ResourceID<T> id) {
+        if (auto store = GetStore<T>()) {
+            if (auto entry = store->Get(id); entry) {
+                return entry->data.get();
+            }
+        }
+        return nullptr;
+    }
+
+    template <typename T, typename... Args>
+    ResourceID<T> Create(Args&&... args) {
+        if (!m_stores.contains(typeid(T))) {
+            m_stores.try_emplace(typeid(T), std::make_unique<ResourceStore<T>>());
+        }
+        return GetStore<T>()->Add(std::forward<Args>(args)...);
+    }
+
+private:
+    template <typename T>
+    ResourceStore<T>* GetStore() {
+        if (auto it = m_stores.find(typeid(T)); it != m_stores.end()) {
+            return static_cast<ResourceStore<T>*>(it->second.get());
+        }
+        return nullptr;
+    }
+
+    std::unordered_map<std::type_index, std::unique_ptr<IResourceStore>> m_stores;
+};
+
+inline static ResourceManager resource_manager;
+
+}  // namespace glab

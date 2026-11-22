@@ -6,7 +6,6 @@
 #include "editor/ui/views/outliner.h"
 #include "editor/ui/views/properties.h"
 #include "editor/ui/views/view3d.h"
-#include "global.h"
 #include "platform/window.h"
 
 #include <glad/gl.h>
@@ -47,7 +46,7 @@ void Shutdown() {
     }
 }
 
-Editor::Editor() : m_context(Global::event_manager) {
+Editor::Editor() : m_context() {
     m_widgets.emplace_back(std::make_unique<ui::MainMenuBar>());
     m_widgets.emplace_back(std::make_unique<ui::StatusBar>());
     m_widgets.emplace_back(std::make_unique<ui::DockSpace>());
