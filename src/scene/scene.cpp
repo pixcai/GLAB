@@ -10,7 +10,7 @@ Scene::Scene() : m_root(MakeNode()) {}
 
 std::shared_ptr<Node> Scene::MakeNode() {
     spdlog::debug("Making node");
-    return std::shared_ptr<Node>(new Node(NodeID::Next(), m_storage));
+    return std::shared_ptr<Node>(new Node(NodeID(), m_storage));
 }
 
 void Scene::AddNode(std::shared_ptr<Node> node) { m_root->AddChild(node); }
