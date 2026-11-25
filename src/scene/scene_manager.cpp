@@ -6,8 +6,9 @@ namespace glab::scene {
 
 Scene* SceneManager::CreateScene() {
     auto scene = std::make_unique<Scene>();
-    m_scenes.try_emplace(scene->id, std::move(scene));
-    return m_scenes[scene->id].get();
+    auto id = scene->id;
+    m_scenes.try_emplace(id, std::move(scene));
+    return m_scenes[id].get();
 }
 
 Scene* SceneManager::GetActiveScene() {

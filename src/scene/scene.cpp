@@ -1,36 +1,19 @@
 #include "node.h"
-#include "rendering/render_queue.h"
 #include "scene.h"
 
 #include <spdlog/spdlog.h>
 
 namespace glab::scene {
 
-Scene::Scene() : m_root(MakeNode()) {}
+Scene::Scene() : root(CreateNode()) {}
 
-std::shared_ptr<Node> Scene::MakeNode() {
-    spdlog::debug("Making node");
-    return std::shared_ptr<Node>(new Node(NodeID(), m_storage));
+Node Scene::CreateNode() {
+    spdlog::debug("Create node");
+    return {};
 }
 
-void Scene::AddNode(std::shared_ptr<Node> node) { m_root->AddChild(node); }
+void Scene::AddNode(Node&& node) { nodes.Insert(node.id, std::move(node)); }
 
-void Scene::RemoveNode(std::shared_ptr<Node> node) { m_root->RemoveChild(node); }
-
-rendering::RenderQueue Scene::GetRenderItems() const {
-    rendering::RenderQueue queue{};
-
-    CollectRenderItems(m_root, queue);
-    return queue;
-}
-
-void Scene::CollectRenderItems(std::shared_ptr<Node> node, rendering::RenderQueue& queue) const {
-    for (auto& [_, child] : node->m_children) {
-        queue.meshes.emplace_back();
-    }
-    for (auto& [_, child] : node->m_children) {
-        CollectRenderItems(child, queue);
-    }
-}
+void Scene::RemoveNode(NodeID id) { nodes.Erase(id); }
 
 }  // namespace glab::scene

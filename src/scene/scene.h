@@ -1,8 +1,8 @@
 #pragma once
 
+#include "core/flat_hash_map.h"
 #include "core/id.h"
 #include "node.h"
-#include "rendering/render_queue.h"
 
 namespace glab::scene {
 
@@ -15,22 +15,13 @@ public:
     Scene();
     ~Scene() = default;
 
+    Node CreateNode();
+    void AddNode(Node&& node);
+    void RemoveNode(NodeID id);
+
     SceneID id;
-
-    std::shared_ptr<Node> GetRoot() const { return m_root; }
-
-    std::shared_ptr<Node> MakeNode();
-    void AddNode(std::shared_ptr<Node> node);
-    void RemoveNode(std::shared_ptr<Node> node);
-
-    rendering::RenderQueue GetRenderItems() const;
-
-private:
-    void CollectRenderItems(std::shared_ptr<Node> node, rendering::RenderQueue& queue) const;
-
-private:
-    std::shared_ptr<Node> m_root;
-    Storage m_storage;
+    Node root;
+    core::FlatHashMap<NodeID, Node> nodes;
 };
 
 }  // namespace glab::scene
