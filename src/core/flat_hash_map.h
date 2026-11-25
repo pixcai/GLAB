@@ -21,6 +21,8 @@ struct FlatHashMap {
         return nullptr;
     }
 
+    bool Contains(const K& key) const { return Get(key) != nullptr; }
+
     void Insert(const K& key, const V& value) {
         if (m_key_index_map.contains(key)) {
             return;

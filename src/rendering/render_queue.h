@@ -1,13 +1,13 @@
 #pragma once
 
+#include "render_item.h"
+
 #include <vector>
 
 namespace glab::rendering {
 
-struct MeshItem {};
-
 struct RenderQueue {
-    std::vector<MeshItem> meshes;
+    std::vector<RenderItem> items;
 };
 
 }  // namespace glab::rendering
