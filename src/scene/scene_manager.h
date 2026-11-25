@@ -1,20 +1,20 @@
 #pragma once
 
-#include "scene/scene.h"
+#include "scene.h"
 
 #include <memory>
 #include <unordered_map>
 
-namespace glab {
+namespace glab::scene {
 
 class SceneManager {
 public:
-    scene::Scene* CreateScene();
-    scene::Scene* GetActiveScene();
+    Scene* CreateScene();
+    Scene* GetActiveScene();
 
 private:
-    scene::SceneID m_active_scene_id;
-    std::unordered_map<scene::SceneID, std::unique_ptr<scene::Scene>> m_scenes;
+    SceneID m_active_scene_id;
+    std::unordered_map<SceneID, std::unique_ptr<Scene>> m_scenes;
 };
 
-}  // namespace glab
+}  // namespace glab::scene

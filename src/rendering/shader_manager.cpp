@@ -1,4 +1,3 @@
-#include "config/config.h"
 #include "shader_manager.h"
 
 #include <exception>
@@ -47,14 +46,14 @@ GLuint CompileFiles(std::vector<std::pair<GLenum, std::string>>& files, ShaderFe
     std::vector<GLuint> shaders;
 
     for (auto& [type, path] : files) {
-        std::ifstream file{config::kShaderRoot / path};
+        std::ifstream file{path};
         if (!file.is_open()) {
             throw std::runtime_error(std::format("Failed to open GLSL file: {}", path));
         }
 
         std::ostringstream code;
 
-        code << '\n' << config::kGLSLVersionString << '\n';
+        code << '\n' << "#version 410 core" << '\n';
         for (auto& [feature, macro] : g_feature_macros) {
             if ((features & feature) != ShaderFeature::None) {
                 code << std::format("#define {}", macro) << '\n';
@@ -62,8 +61,8 @@ GLuint CompileFiles(std::vector<std::pair<GLenum, std::string>>& files, ShaderFe
         }
         code << file.rdbuf();
 
-        auto source =
-            stb_include_string(code.str().data(), nullptr, config::kShaderRoot.string().data(), path.data(), error);
+        char inc[32] = {};
+        auto source = stb_include_string(code.str().data(), nullptr, inc, path.data(), error);
         spdlog::debug(source);
         if (!source) {
             throw std::runtime_error(error);

@@ -1,20 +1,19 @@
 #pragma once
 
-#include "editor/ui/widget.h"
 #include "editor_context.h"
-#include "platform/window.h"
+#include "editor_ui.h"
+#include "rendering/compositor.h"
+#include "resource_manager.h"
+#include "scene/scene_manager.h"
 
 #include <memory>
 #include <vector>
 
 namespace glab::editor {
 
-void Init(platform::Window* window);
-void Shutdown();
-
 class Editor {
 public:
-    Editor();
+    Editor(EventManager* event_manager);
     ~Editor();
 
     void BeginFrame();
@@ -22,8 +21,11 @@ public:
     void EndFrame();
 
 private:
+    ResourceManager m_resource_manager;
+    scene::SceneManager m_scene_manager;
+    rendering::Compositor m_compositor;
     EditorContext m_context;
-    std::vector<std::unique_ptr<ui::Widget>> m_widgets;
+    std::vector<std::unique_ptr<EditorUI>> m_widgets;
 };
 
 }  // namespace glab::editor

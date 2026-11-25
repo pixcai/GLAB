@@ -16,7 +16,7 @@ enum class ResourceStatus {
 
 template <typename T>
 struct ResourceEntry {
-    core::ResourceID<T> id;
+    core::ID<T> id;
     std::unique_ptr<T> data;
     int ref_count{1};
     ResourceStatus status{ResourceStatus::kReady};
@@ -28,7 +28,7 @@ struct IResourceStore {
 
 template <typename T>
 struct ResourceStore : public IResourceStore {
-    ResourceEntry<T>* Get(core::ResourceID<T> id) {
+    ResourceEntry<T>* Get(core::ID<T> id) {
         if (auto it = m_entries.find(id); it != m_entries.end()) {
             return &it->second;
         }
@@ -36,21 +36,21 @@ struct ResourceStore : public IResourceStore {
     }
 
     template <typename... Args>
-    core::ResourceID<T> Add(Args&&... args) {
-        core::ResourceID<T> id;
+    core::ID<T> Add(Args&&... args) {
+        core::ID<T> id;
         m_entries.try_emplace(id, id, std::make_unique<T>(std::forward<Args>(args)...));
         return id;
     }
 
-    void Remove(core::ResourceID<T> id) { m_entries.erase(id); }
+    void Remove(core::ID<T> id) { m_entries.erase(id); }
 
 private:
-    std::unordered_map<core::ResourceID<T>, ResourceEntry<T>> m_entries;
+    std::unordered_map<core::ID<T>, ResourceEntry<T>> m_entries;
 };
 
 struct ResourceManager {
     template <typename T>
-    T* Acquire(core::ResourceID<T> id) {
+    T* Acquire(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
             if (auto entry = store->Get(id); entry) {
                 ++entry->ref_count;
@@ -61,7 +61,7 @@ struct ResourceManager {
     }
 
     template <typename T>
-    void Release(core::ResourceID<T> id) {
+    void Release(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
             if (auto entry = store->Get(id); entry) {
                 if (--entry->ref_count <= 0) {
@@ -72,7 +72,7 @@ struct ResourceManager {
     }
 
     template <typename T>
-    T* TryGet(core::ResourceID<T> id) {
+    T* TryGet(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
             if (auto entry = store->Get(id); entry) {
                 return entry->data.get();
@@ -82,7 +82,7 @@ struct ResourceManager {
     }
 
     template <typename T, typename... Args>
-    core::ResourceID<T> Create(Args&&... args) {
+    core::ID<T> Create(Args&&... args) {
         if (!m_stores.contains(typeid(T))) {
             m_stores.try_emplace(typeid(T), std::make_unique<ResourceStore<T>>());
         }
