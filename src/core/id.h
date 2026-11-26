@@ -17,6 +17,11 @@ struct ID {
 
     bool operator==(const ID& other) const = default;
 
+    void Reset() {
+        index = kInvalidIndex;
+        generation = 0;
+    }
+
     bool IsValid() const { return index != kInvalidIndex; }
 };
 

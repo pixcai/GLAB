@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/flat_hash_map.h"
 #include "core/id.h"
 
 #include <memory>
@@ -15,8 +16,7 @@ enum class ResourceStatus {
 };
 
 template <typename T>
-struct ResourceEntry {
-    core::ID<T> id;
+struct Resource {
     std::unique_ptr<T> data;
     int ref_count{1};
     ResourceStatus status{ResourceStatus::kReady};
@@ -28,24 +28,8 @@ struct IResourceStore {
 
 template <typename T>
 struct ResourceStore : public IResourceStore {
-    ResourceEntry<T>* Get(core::ID<T> id) {
-        if (auto it = m_entries.find(id); it != m_entries.end()) {
-            return &it->second;
-        }
-        return nullptr;
-    }
-
-    template <typename... Args>
-    core::ID<T> Add(Args&&... args) {
-        core::ID<T> id;
-        m_entries.try_emplace(id, id, std::make_unique<T>(std::forward<Args>(args)...));
-        return id;
-    }
-
-    void Remove(core::ID<T> id) { m_entries.erase(id); }
-
-private:
-    std::unordered_map<core::ID<T>, ResourceEntry<T>> m_entries;
+    inline static core::IDPool<T> id_pool;
+    core::FlatHashMap<core::ID<T>, Resource<T>> resources;
 };
 
 class ResourceManager {
@@ -53,9 +37,9 @@ public:
     template <typename T>
     T* Acquire(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
-            if (auto entry = store->Get(id); entry) {
-                ++entry->ref_count;
-                return entry->data.get();
+            if (auto resource = store->resources.Get(id); resource != nullptr) {
+                ++resource->ref_count;
+                return resource->data.get();
             }
         }
         return nullptr;
@@ -64,9 +48,10 @@ public:
     template <typename T>
     void Release(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
-            if (auto entry = store->Get(id); entry) {
-                if (--entry->ref_count <= 0) {
-                    store->Remove(id);
+            if (auto resource = store->resources.Get(id); resource != nullptr) {
+                if (--resource->ref_count <= 0) {
+                    ResourceStore<T>::id_pool.Deallocate(id);
+                    store->resources->Erase(id);
                 }
             }
         }
@@ -75,19 +60,37 @@ public:
     template <typename T>
     T* TryGet(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
-            if (auto entry = store->Get(id); entry) {
-                return entry->data.get();
+            if (auto resource = store->resources.Get(id); resource != nullptr) {
+                return resource->data.get();
             }
         }
         return nullptr;
     }
 
+    template <typename T>
+    core::ID<T> Add(T&& data) {
+        auto store = GetStore<T>();
+        auto id = ResourceStore<T>::id_pool.Allocate();
+
+        if (!store) {
+            m_stores.try_emplace(typeid(T), std::make_unique<ResourceStore<T>>());
+            store = GetStore<T>();
+        }
+        store->resources.Insert(id, std::make_unique<T>(std::forward<T>(data)));
+        return id;
+    }
+
     template <typename T, typename... Args>
     core::ID<T> Create(Args&&... args) {
-        if (!m_stores.contains(typeid(T))) {
+        auto store = GetStore<T>();
+        auto id = ResourceStore<T>::id_pool.Allocate();
+
+        if (!store) {
             m_stores.try_emplace(typeid(T), std::make_unique<ResourceStore<T>>());
+            store = GetStore<T>();
         }
-        return GetStore<T>()->Add(std::forward<Args>(args)...);
+        store->resources.Emplace(id, std::make_unique<T>(std::forward<Args>(args)...));
+        return id;
     }
 
 private:

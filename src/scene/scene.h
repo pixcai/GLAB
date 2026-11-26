@@ -12,8 +12,10 @@ using SceneID = core::ID<Scene>;
 
 class Scene {
 public:
+    static inline core::IDPool<Scene> id_pool;
+
     Scene();
-    ~Scene() = default;
+    ~Scene();
 
     Node CreateNode();
     void AddNode(Node&& node);

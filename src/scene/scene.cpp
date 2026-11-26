@@ -1,19 +1,42 @@
-#include "node.h"
 #include "scene.h"
+#include "node.h"
 
 #include <spdlog/spdlog.h>
 
 namespace glab::scene {
 
-Scene::Scene() : root(CreateNode()) {}
-
-Node Scene::CreateNode() {
-    spdlog::debug("Create node");
-    return {};
+Scene::Scene() : id(id_pool.Allocate()), root(CreateNode()) {
+    spdlog::debug("Scene(index={}, generation={})", id.index, id.generation);
 }
 
-void Scene::AddNode(Node&& node) { nodes.Insert(node.id, std::move(node)); }
+Scene::~Scene() {
+    spdlog::debug("~Scene(index={}, generation={})", id.index, id.generation);
+    nodes.Clear();
+    id_pool.Deallocate(id);
+}
 
-void Scene::RemoveNode(NodeID id) { nodes.Erase(id); }
+Node Scene::CreateNode() { return {}; }
+
+void Scene::AddNode(Node&& node) {
+    if (!node.id.IsValid() || nodes.Contains(node.id)) {
+        return;
+    }
+    root.children.push_back(node.id);
+    node.parent = root.id;
+    nodes.Insert(node.id, std::move(node));
+}
+
+void Scene::RemoveNode(NodeID id) {
+    if (auto node = nodes.Get(id); node != nullptr) {
+        if (node->parent == root.id) {
+            std::erase(root.children, id);
+        } else {
+            auto parent = nodes.Get(node->parent);
+            std::erase(parent->children, id);
+        }
+        node->parent.Reset();
+    }
+    nodes.Erase(id);
+}
 
 }  // namespace glab::scene

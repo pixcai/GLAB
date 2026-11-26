@@ -1,20 +1,19 @@
 #pragma once
 
+#include "core/flat_hash_map.h"
 #include "scene.h"
-
-#include <memory>
-#include <unordered_map>
 
 namespace glab::scene {
 
 class SceneManager {
 public:
-    Scene* CreateScene();
+    Scene& CreateScene();
     Scene* GetActiveScene();
+    void SetActiveScene(SceneID id);
 
 private:
     SceneID m_active_scene_id;
-    std::unordered_map<SceneID, std::unique_ptr<Scene>> m_scenes;
+    core::FlatHashMap<SceneID, Scene> m_scenes;
 };
 
 }  // namespace glab::scene

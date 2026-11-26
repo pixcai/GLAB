@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/id.h"
+#include "math/transform.h"
 
 #include <any>
 #include <typeindex>
@@ -13,10 +14,17 @@ class Node;
 using NodeID = core::ID<Node>;
 
 struct Node {
+    inline static core::IDPool<Node> id_pool;
+
+    Node();
+    ~Node();
+
     NodeID id;
     NodeID parent;
     std::vector<NodeID> children;
     std::unordered_map<std::type_index, std::any> components;
+
+    math::Transform transform;
 
     template <typename Component>
     void Add(Component&& component) {
