@@ -48,7 +48,8 @@ private:
     std::unordered_map<core::ID<T>, ResourceEntry<T>> m_entries;
 };
 
-struct ResourceManager {
+class ResourceManager {
+public:
     template <typename T>
     T* Acquire(core::ID<T> id) {
         if (auto store = GetStore<T>()) {
@@ -101,6 +102,6 @@ private:
     std::unordered_map<std::type_index, std::unique_ptr<IResourceStore>> m_stores;
 };
 
-inline static ResourceManager resource_manager;
+inline ResourceManager resource_manager;
 
 }  // namespace glab

@@ -5,8 +5,7 @@
 
 namespace glab::editor {
 
-Editor::Editor(EventManager* event_manager)
-    : m_context(event_manager, &m_resource_manager, &m_scene_manager, &m_compositor) {
+Editor::Editor(EventManager* event_manager) : m_context(event_manager, &m_scene_manager, &m_compositor) {
     m_scene_manager.CreateScene();
 
     m_widgets.emplace_back(std::make_unique<View3D>(m_context));

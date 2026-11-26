@@ -1,7 +1,5 @@
 #pragma once
 
-#include "render_queue.h"
-
 namespace glab {
 
 namespace scene {
@@ -12,7 +10,9 @@ class Scene;
 
 namespace rendering {
 
-struct RenderCollector {
+struct RenderQueue;
+
+struct Collector {
     void Collect(scene::Scene& scene, RenderQueue& out_queue);
 };
 

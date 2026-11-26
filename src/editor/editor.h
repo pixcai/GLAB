@@ -3,7 +3,6 @@
 #include "editor_context.h"
 #include "editor_ui.h"
 #include "rendering/compositor.h"
-#include "resource_manager.h"
 #include "scene/scene_manager.h"
 
 #include <memory>
@@ -21,7 +20,6 @@ public:
     void EndFrame();
 
 private:
-    ResourceManager m_resource_manager;
     scene::SceneManager m_scene_manager;
     rendering::Compositor m_compositor;
     EditorContext m_context;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "render_collector.h"
+#include "collector.h"
 #include "render_queue.h"
 #include "renderer.h"
 
@@ -22,7 +22,7 @@ public:
 
 private:
     RenderQueue m_queue;
-    RenderCollector m_collector;
+    Collector m_collector;
     MeshRenderer m_mesh_renderer;
 };
 
