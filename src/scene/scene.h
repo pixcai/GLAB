@@ -1,5 +1,6 @@
 #pragma once
 
+#include "camera.h"
 #include "core/flat_hash_map.h"
 #include "core/id.h"
 #include "node.h"
@@ -21,9 +22,15 @@ public:
     void AddNode(Node&& node);
     void RemoveNode(NodeID id);
 
+    std::size_t GetNodeCount() const { return nodes.Size(); }
+    Camera& GetActiveCamera() const { return *active_camera; }
+    void SetActiveCamera(Camera* camera);
+
     SceneID id;
     Node root;
     core::FlatHashMap<NodeID, Node> nodes;
+
+    Camera* active_camera;
 };
 
 }  // namespace glab::scene

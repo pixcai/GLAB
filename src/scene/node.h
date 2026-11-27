@@ -39,7 +39,15 @@ struct Node {
     template <typename Component>
     Component* Get() {
         if (auto it = components.find(typeid(Component)); it != components.end()) {
-            return &std::any_cast<Component>(it->second);
+            return &std::any_cast<Component&>(it->second);
+        }
+        return nullptr;
+    }
+
+    template <typename Component>
+    const Component* Get() const {
+        if (auto it = components.find(typeid(Component)); it != components.end()) {
+            return &std::any_cast<Component&>(it->second);
         }
         return nullptr;
     }

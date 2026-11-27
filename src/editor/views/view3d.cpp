@@ -1,7 +1,7 @@
+#include "view3d.h"
 #include "editor/editor_ui.h"
 #include "rendering/compositor.h"
 #include "scene/scene_manager.h"
-#include "view3d.h"
 
 #include <imgui.h>
 

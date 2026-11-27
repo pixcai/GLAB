@@ -11,7 +11,7 @@ struct VertexAttribute {
     GLint size;
     GLenum type;
     GLboolean normalized;
-    std::size_t offset;
+    GLsizeiptr offset;
 };
 
 enum class VertexLayoutType : std::uint8_t {
@@ -20,7 +20,7 @@ enum class VertexLayoutType : std::uint8_t {
 
 struct VertexLayout {
     VertexLayoutType type;
-    GLsizei tride;
+    GLsizei stride;
     std::vector<VertexAttribute> attributes;
 };
 

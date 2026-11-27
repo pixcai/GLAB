@@ -3,7 +3,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/glm.hpp>
 
-namespace glab::rendering {
+namespace glab::scene {
 
 enum class CameraType {
     Perspective,
@@ -47,4 +47,4 @@ struct Camera {
     }
 };
 
-}  // namespace glab::rendering
+}  // namespace glab::scene

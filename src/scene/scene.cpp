@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "camera.h"
 #include "node.h"
 
 #include <spdlog/spdlog.h>
@@ -7,11 +8,12 @@ namespace glab::scene {
 
 Scene::Scene() : id(id_pool.Allocate()), root(CreateNode()) {
     spdlog::debug("Scene(index={}, generation={})", id.index, id.generation);
+    root.Add<Camera>({});
+    SetActiveCamera(root.Get<Camera>());
 }
 
 Scene::~Scene() {
     spdlog::debug("~Scene(index={}, generation={})", id.index, id.generation);
-    nodes.Clear();
     id_pool.Deallocate(id);
 }
 
@@ -21,6 +23,7 @@ void Scene::AddNode(Node&& node) {
     if (!node.id.IsValid() || nodes.Contains(node.id)) {
         return;
     }
+    spdlog::debug("AddNode(index={}, generation={})", node.id.index, node.id.generation);
     root.children.push_back(node.id);
     node.parent = root.id;
     nodes.Insert(node.id, std::move(node));
@@ -37,6 +40,14 @@ void Scene::RemoveNode(NodeID id) {
         node->parent.Reset();
     }
     nodes.Erase(id);
+}
+
+void Scene::SetActiveCamera(Camera* camera) {
+    if (!camera) {
+        active_camera = root.Get<Camera>();
+    } else {
+        active_camera = camera;
+    }
 }
 
 }  // namespace glab::scene

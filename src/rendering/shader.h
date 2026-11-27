@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/id.h"
+
 #include <string>
 #include <unordered_map>
 #include <variant>
@@ -32,6 +34,10 @@ inline std::vector<Uniform> g_uniforms = {
 };
 
 inline std::vector<UniformBlock> g_uniform_blocks = {};
+
+class Shader;
+
+using ShaderID = core::ID<Shader>;
 
 class Shader {
 public:

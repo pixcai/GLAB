@@ -91,6 +91,11 @@ struct FlatHashMap {
         m_key_index_map.clear();
     }
 
+    auto begin() { return m_values.begin(); }
+    auto begin() const { return m_values.begin(); }
+    auto end() { return m_values.end(); }
+    auto end() const { return m_values.end(); }
+
 private:
     std::vector<std::pair<K, V>> m_values;
     std::unordered_map<K, std::size_t> m_key_index_map;

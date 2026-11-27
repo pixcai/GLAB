@@ -20,8 +20,8 @@ public:
     void EndFrame();
 
 private:
-    scene::SceneManager m_scene_manager;
     rendering::Compositor m_compositor;
+    scene::SceneManager m_scene_manager;
     EditorContext m_context;
     std::vector<std::unique_ptr<EditorUI>> m_widgets;
 };
