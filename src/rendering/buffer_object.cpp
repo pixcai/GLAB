@@ -45,8 +45,11 @@ void BufferObject::Upload(const void* data, GLsizeiptr size) {
         spdlog::error("Invalid GPU buffer");
         return;
     }
+    spdlog::debug("BufferObject::Upload result1: {}", glGetError());
     Bind();
+    spdlog::debug("BufferObject::Upload result2: {}", glGetError());
     glBufferData(m_target, size, data, m_usage);
+    spdlog::debug("BufferObject::Upload result3: {}", glGetError());
 }
 
 void BufferObject::Update(const void* data, GLintptr offset, GLsizeiptr size) {
@@ -54,8 +57,11 @@ void BufferObject::Update(const void* data, GLintptr offset, GLsizeiptr size) {
         spdlog::error("Invalid GPU buffer");
         return;
     }
+    spdlog::debug("BufferObject::Update result1: {}", glGetError());
     Bind();
+    spdlog::debug("BufferObject::Update result2: {}", glGetError());
     glBufferSubData(m_target, offset, size, data);
+    spdlog::debug("BufferObject::Update result3: {}", glGetError());
 }
 
 VertexArrayObject::VertexArrayObject() { glGenVertexArrays(1, &m_id); }
@@ -200,8 +206,9 @@ BufferBlock* RenderBufferGroup::Allocate(std::size_t vertex_count, std::size_t i
         block_id_pool.Deallocate(block_id);
         return nullptr;
     }
-    m_blocks.Insert(block_id, block);
-    return m_blocks.Get(block_id);
+    spdlog::debug("Allocate block(index={}, generation={})", block.id.index, block.id.generation);
+    m_blocks.Insert(block.id, std::move(block));
+    return m_blocks.Get(block.id);
 }
 
 void RenderBufferGroup::Deallocate(BufferBlockID id) {
@@ -212,12 +219,19 @@ void RenderBufferGroup::Deallocate(BufferBlockID id) {
 
 void RenderBufferGroup::Upload(BufferBlockID id, const void* vertices, std::size_t vertex_count, const void* indices,
                                std::size_t index_count) {
+    spdlog::debug("Upload block(index={}, generation={})", id.index, id.generation);
+    spdlog::debug("Blocks count: {}", m_blocks.Size());
     if (auto block = m_blocks.Get(id); block != nullptr) {
         if (block->vertex_count < vertex_count || block->index_count < index_count) {
             return;
         }
+        spdlog::debug("Block(vbo_offset={}, vbo_count={}, ebo_offset={}, ebo_count={})", block->vertex_offset,
+                      block->vertex_count, block->index_offset, block->index_count);
+        spdlog::debug("Upload result1: {}", glGetError());
         m_vbo.Update(vertices, block->vertex_offset, vertex_count * m_stride);
+        spdlog::debug("Upload result2: {}", glGetError());
         m_ebo.Update(indices, block->index_offset, index_count * sizeof(GLuint));
+        spdlog::debug("Upload result3: {}", glGetError());
     }
 }
 

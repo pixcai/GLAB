@@ -27,6 +27,7 @@ void MeshRenderer::Render(const RenderTask& task, const scene::Camera& camera) {
     shader->Use();
     shader->SetUniform("view_matrix", camera.view_matrix);
     shader->SetUniform("projection_matrix", camera.projection_matrix);
+    shader->SetUniform("color", material->base_color);
 
     for (auto& item : task.items) {
         shader->SetUniform("model_matrix", item.world_matrix);
@@ -46,6 +47,7 @@ void MeshRenderer::DrawItem(const RenderItem& item, const scene::Camera& camera)
         if (!block) {
             block = mesh->block = m_buffer_group.Allocate(mesh->vertices.size(), mesh->indices.size());
         }
+        spdlog::debug("Prepare upload: {}", glGetError());
         m_buffer_group.Upload(block->id, mesh->vertices.data(), mesh->vertices.size(), mesh->indices.data(),
                               mesh->indices.size());
         mesh->is_dirty = false;

@@ -9,7 +9,7 @@ namespace glab::scene {
 Scene::Scene() : id(id_pool.Allocate()), root(CreateNode()) {
     spdlog::debug("Scene(index={}, generation={})", id.index, id.generation);
     root.Add<Camera>({});
-    SetActiveCamera(root.Get<Camera>());
+    active_camera = root.Get<Camera>();
 }
 
 Scene::~Scene() {

@@ -68,10 +68,10 @@ void Shader::SetUniform(std::string name, const UniformValue& value) const {
             glUniform2fv(uniform.location, 1, glm::value_ptr(std::get<glm::vec2>(value)));
             break;
         case GL_FLOAT_VEC3:
-            glUniform2fv(uniform.location, 1, glm::value_ptr(std::get<glm::vec3>(value)));
+            glUniform3fv(uniform.location, 1, glm::value_ptr(std::get<glm::vec3>(value)));
             break;
         case GL_FLOAT_VEC4:
-            glUniform2fv(uniform.location, 1, glm::value_ptr(std::get<glm::vec4>(value)));
+            glUniform4fv(uniform.location, 1, glm::value_ptr(std::get<glm::vec4>(value)));
             break;
         case GL_FLOAT_MAT3:
             glUniformMatrix3fv(uniform.location, 1, GL_FALSE, glm::value_ptr(std::get<glm::mat3>(value)));

@@ -98,6 +98,7 @@ GLuint CompileFiles(std::vector<std::pair<GLenum, std::string>>& files, ShaderFe
         glDeleteProgram(program);
         throw std::runtime_error(error);
     }
+    spdlog::debug("Create program: {}", program);
     return program;
 }
 

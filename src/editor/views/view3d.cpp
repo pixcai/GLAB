@@ -16,7 +16,9 @@ View3D::~View3D() {}
 
 void View3D::Render(EditorContext& context) {
     if (ImGui::Begin("View3D", &visible)) {
+        m_compositor.BeginFrame();
         m_compositor.Render(context.scene_manager->GetActiveScene());
+        m_compositor.EndFrame();
     }
     ImGui::End();
 }

@@ -23,7 +23,7 @@ public:
     void RemoveNode(NodeID id);
 
     std::size_t GetNodeCount() const { return nodes.Size(); }
-    Camera& GetActiveCamera() const { return *active_camera; }
+    Camera& GetActiveCamera() { return *root.Get<Camera>(); }
     void SetActiveCamera(Camera* camera);
 
     SceneID id;

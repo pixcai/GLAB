@@ -9,7 +9,10 @@
 
 namespace glab {
 
-EditorShell::EditorShell(EventManager* event_manager) : m_event_manager(event_manager), m_editor(event_manager) {}
+EditorShell::EditorShell(EventManager* event_manager) : m_event_manager(event_manager), m_editor(event_manager) {
+    glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, 1920, 1080);
+}
 
 EditorShell::~EditorShell() {}
 
@@ -23,7 +26,7 @@ void EditorShell::BeginFrame() {
 void EditorShell::Render() {
     RenderMainMenuBar();
     RenderStatusBar();
-    RenderDockSpace();
+    // RenderDockSpace();
     m_editor.Render();
 }
 

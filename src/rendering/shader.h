@@ -31,6 +31,7 @@ inline std::vector<Uniform> g_uniforms = {
     {"model_matrix", "Model Matrix", GL_FLOAT_MAT4},
     {"view_matrix", "View Matrix", GL_FLOAT_MAT4},
     {"projection_matrix", "Projection Matrix", GL_FLOAT_MAT4},
+    {"color", "Color", GL_FLOAT_VEC4},
 };
 
 inline std::vector<UniformBlock> g_uniform_blocks = {};
