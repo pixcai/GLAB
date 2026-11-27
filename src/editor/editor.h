@@ -2,7 +2,6 @@
 
 #include "editor_context.h"
 #include "editor_ui.h"
-#include "rendering/compositor.h"
 #include "scene/scene_manager.h"
 
 #include <memory>
@@ -20,7 +19,6 @@ public:
     void EndFrame();
 
 private:
-    rendering::Compositor m_compositor;
     scene::SceneManager m_scene_manager;
     EditorContext m_context;
     std::vector<std::unique_ptr<EditorUI>> m_widgets;

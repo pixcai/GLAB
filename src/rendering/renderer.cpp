@@ -1,6 +1,6 @@
-#include "renderer.h"
 #include "mesh/vertex.h"
 #include "render_queue.h"
+#include "renderer.h"
 #include "rendering/vertex_layout.h"
 #include "resource_manager.h"
 #include "scene/camera.h"
@@ -10,7 +10,8 @@
 
 namespace glab::rendering {
 
-MeshRenderer::MeshRenderer() : m_buffer_group(mesh::default_layout, 4 * 1024 * 1024, 1024 * 1024) {}
+MeshRenderer::MeshRenderer(RenderContext& context)
+    : m_context(context), m_buffer_group(mesh::default_layout, 4 * 1024 * 1024, 1024 * 1024) {}
 
 void MeshRenderer::BeginFrame() { m_buffer_group.Bind(); }
 
@@ -19,7 +20,16 @@ void MeshRenderer::Render(const RenderTask& task, const scene::Camera& camera) {
     if (!material) {
         return;
     }
+    auto shader = m_context.shader_manager->Get("mesh");
+    if (!shader) {
+        return;
+    }
+    shader->Use();
+    shader->SetUniform("view_matrix", camera.view_matrix);
+    shader->SetUniform("projection_matrix", camera.projection_matrix);
+
     for (auto& item : task.items) {
+        shader->SetUniform("model_matrix", item.world_matrix);
         DrawItem(item, camera);
     }
 }

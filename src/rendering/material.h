@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/id.h"
+#include "rendering/shader_manager.h"
 #include "shader.h"
 
 #include <glm/glm.hpp>
@@ -12,10 +13,11 @@ struct Material;
 using MaterialID = core::ID<Material>;
 
 struct Material {
-    ShaderID shader_id;
+    ShaderType shader_type;
+    ShaderFeature features;
     glm::vec4 base_color;
     float albedo;
-    float metalic;
+    float metallic;
     float roughness;
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
 namespace glab::scene {
@@ -31,6 +32,11 @@ struct Camera {
     float left{-1.0f}, right{1.0f}, bottom{-1.0f}, top{1.0f};
 
     bool active{true};
+
+    Camera() {
+        view_matrix = glm::lookAt(glm::vec3{0.0f, 4.0f, 8.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f});
+        updateProjectionMatrix();
+    }
 
     void updateViewMatrix(const glm::mat4& camera_world_matrix) {
         view_matrix = glm::inverse(camera_world_matrix);

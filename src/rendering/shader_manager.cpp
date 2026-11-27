@@ -1,6 +1,7 @@
 #include "shader_manager.h"
 
 #include <exception>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -46,7 +47,7 @@ GLuint CompileFiles(std::vector<std::pair<GLenum, std::string>>& files, ShaderFe
     std::vector<GLuint> shaders;
 
     for (auto& [type, path] : files) {
-        std::ifstream file{path};
+        std::ifstream file{std::filesystem::path(SHADERS_ROOT) / path};
         if (!file.is_open()) {
             throw std::runtime_error(std::format("Failed to open GLSL file: {}", path));
         }
@@ -61,7 +62,7 @@ GLuint CompileFiles(std::vector<std::pair<GLenum, std::string>>& files, ShaderFe
         }
         code << file.rdbuf();
 
-        char inc[32] = {};
+        char inc[32] = SHADERS_ROOT;
         auto source = stb_include_string(code.str().data(), nullptr, inc, path.data(), error);
         spdlog::debug(source);
         if (!source) {

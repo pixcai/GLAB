@@ -7,11 +7,11 @@
 
 namespace glab::editor {
 
-Editor::Editor(EventManager* event_manager) : m_context(event_manager, &m_scene_manager, &m_compositor) {
+Editor::Editor(EventManager* event_manager) : m_context(event_manager, &m_scene_manager) {
     auto& scene = m_scene_manager.CreateScene();
     auto node = scene.CreateNode();
 
-    node.Add<scene::MeshComponent>({ResourceFactory::CreateCube(2.0f)});
+    node.Add<scene::MeshComponent>({ResourceFactory::CreateCube(2.0f), ResourceFactory::CreateMaterial()});
     scene.AddNode(std::move(node));
     m_scene_manager.SetActiveScene(scene.id);
 
@@ -22,7 +22,7 @@ Editor::Editor(EventManager* event_manager) : m_context(event_manager, &m_scene_
 
 Editor::~Editor() {}
 
-void Editor::BeginFrame() { m_context.compositor->BeginFrame(); }
+void Editor::BeginFrame() {}
 
 void Editor::Render() {
     for (auto& widget : m_widgets) {
@@ -30,6 +30,6 @@ void Editor::Render() {
     }
 }
 
-void Editor::EndFrame() { m_context.compositor->EndFrame(); }
+void Editor::EndFrame() {}
 
 }  // namespace glab::editor

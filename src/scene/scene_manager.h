@@ -8,7 +8,7 @@ namespace glab::scene {
 class SceneManager {
 public:
     Scene& CreateScene();
-    Scene* GetActiveScene();
+    Scene& GetActiveScene();
     void SetActiveScene(SceneID id);
 
 private:

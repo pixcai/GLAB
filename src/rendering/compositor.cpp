@@ -3,6 +3,8 @@
 
 namespace glab::rendering {
 
+Compositor::Compositor(RenderContext& context) : m_mesh_renderer(context) {}
+
 void Compositor::BeginFrame() {
     m_queue.opaque.clear();
     m_queue.transparent.clear();

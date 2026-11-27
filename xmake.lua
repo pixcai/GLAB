@@ -10,6 +10,7 @@ add_requires("glfw", "glm", "stb", "spdlog", "fastgltf")
 add_packages("imgui","glad", "glfw", "glm", "stb", "spdlog", "fastgltf")
 
 add_defines('PROJECT_ROOT="' .. path.unix(os.projectdir()) .. '"')
+add_defines('SHADERS_ROOT="' .. path.unix(path.join(os.projectdir(), 'assets/shaders')) .. '"')
 add_defines("GLFW_INCLUDE_NONE")
 
 target("GLAB")

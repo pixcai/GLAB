@@ -1,6 +1,6 @@
-#include "scene.h"
 #include "camera.h"
 #include "node.h"
+#include "scene.h"
 
 #include <spdlog/spdlog.h>
 

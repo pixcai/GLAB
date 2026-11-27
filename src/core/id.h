@@ -7,8 +7,8 @@ namespace glab::core {
 
 template <typename T>
 struct ID {
-    using Index = std::size_t;
-    using Generation = std::size_t;
+    using Index = std::uint32_t;
+    using Generation = std::uint32_t;
 
     static constexpr Index kInvalidIndex = std::numeric_limits<Index>::max();
 

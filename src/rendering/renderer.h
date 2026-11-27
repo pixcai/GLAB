@@ -3,12 +3,17 @@
 #include "buffer_object.h"
 #include "render_queue.h"
 #include "scene/camera.h"
+#include "shader_manager.h"
 
 namespace glab::rendering {
 
+struct RenderContext {
+    ShaderManager* shader_manager{nullptr};
+};
+
 class MeshRenderer {
 public:
-    MeshRenderer();
+    MeshRenderer(RenderContext& context);
     ~MeshRenderer() = default;
 
     void BeginFrame();
@@ -18,6 +23,7 @@ public:
 private:
     void DrawItem(const RenderItem& item, const scene::Camera& camera);
 
+    RenderContext& m_context;
     RenderBufferGroup m_buffer_group;
 };
 

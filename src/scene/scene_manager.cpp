@@ -1,5 +1,5 @@
-#include "scene_manager.h"
 #include "scene/scene.h"
+#include "scene_manager.h"
 
 namespace glab::scene {
 
@@ -11,7 +11,7 @@ Scene& SceneManager::CreateScene() {
     return *m_scenes.Get(id);
 }
 
-Scene* SceneManager::GetActiveScene() { return m_scenes.Get(m_active_scene_id); }
+Scene& SceneManager::GetActiveScene() { return *m_scenes.Get(m_active_scene_id); }
 
 void SceneManager::SetActiveScene(SceneID id) { m_active_scene_id = id; }
 

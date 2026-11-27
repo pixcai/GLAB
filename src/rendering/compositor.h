@@ -16,6 +16,9 @@ namespace rendering {
 
 class Compositor {
 public:
+    Compositor(RenderContext& context);
+    ~Compositor() = default;
+
     void BeginFrame();
     void Render(scene::Scene& scene);
     void EndFrame();

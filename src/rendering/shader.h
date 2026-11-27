@@ -39,6 +39,11 @@ class Shader;
 
 using ShaderID = core::ID<Shader>;
 
+enum class ShaderType : std::uint8_t {
+    kBasic,
+    kPBR,
+};
+
 class Shader {
 public:
     Shader(GLuint program);
