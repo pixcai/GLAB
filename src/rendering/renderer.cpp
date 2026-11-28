@@ -13,7 +13,16 @@ namespace glab::rendering {
 MeshRenderer::MeshRenderer(RenderContext& context)
     : m_context(context), m_buffer_group(mesh::default_layout, 4 * 1024 * 1024, 1024 * 1024) {}
 
-void MeshRenderer::BeginFrame() { m_buffer_group.Bind(); }
+void MeshRenderer::BeginFrame() {
+    if (m_context.framebuffer) {
+        auto [width, height] = m_context.framebuffer->GetSize();
+        m_context.framebuffer->Bind();
+        glViewport(0, 0, width, height);
+        glClearColor(0.1451f, 0.1647f, 0.1961f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+    m_buffer_group.Bind();
+}
 
 void MeshRenderer::Render(const RenderTask& task, const scene::Camera& camera) {
     auto material = resource_manager.TryGet(task.material_id);
@@ -57,6 +66,10 @@ void MeshRenderer::DrawItem(const RenderItem& item, const scene::Camera& camera)
                              reinterpret_cast<void*>(block->index_offset), block->basevertex);
 }
 
-void MeshRenderer::EndFrame() {}
+void MeshRenderer::EndFrame() {
+    if (m_context.framebuffer) {
+        m_context.framebuffer->Unbind();
+    }
+}
 
 }  // namespace glab::rendering

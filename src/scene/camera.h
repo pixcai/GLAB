@@ -18,7 +18,7 @@ struct Camera {
     float yaw{0.0f}, pitch{0.0f};
 
     float near_plane{0.01f};
-    float far_plane{100.0f};
+    float far_plane{1000.0f};
 
     // Perspective camera fields
     float fovy{45.0f};
@@ -35,7 +35,7 @@ struct Camera {
 
     Camera() {
         view_matrix = glm::lookAt(glm::vec3(0.0f, 4.0f, 8.0f), glm::vec3(), glm::vec3(0.0f, 1.0f, 0.0f));
-        projection_matrix = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 0.01f, 100.0f);
+        updateProjectionMatrix();
     }
 
     void updateViewMatrix(const glm::mat4& camera_world_matrix) {

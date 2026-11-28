@@ -26,7 +26,7 @@ void EditorShell::BeginFrame() {
 void EditorShell::Render() {
     RenderMainMenuBar();
     RenderStatusBar();
-    // RenderDockSpace();
+    RenderDockSpace();
     m_editor.Render();
 }
 

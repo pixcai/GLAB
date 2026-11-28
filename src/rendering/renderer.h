@@ -1,6 +1,7 @@
 #pragma once
 
 #include "buffer_object.h"
+#include "framebuffer.h"
 #include "render_queue.h"
 #include "scene/camera.h"
 #include "shader_manager.h"
@@ -9,6 +10,7 @@ namespace glab::rendering {
 
 struct RenderContext {
     ShaderManager* shader_manager{nullptr};
+    Framebuffer* framebuffer{nullptr};
 };
 
 class MeshRenderer {
